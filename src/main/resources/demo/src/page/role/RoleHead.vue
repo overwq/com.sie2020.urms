@@ -26,8 +26,8 @@ export default {
       role: {}
     }
   },
-  created: function(){
-    document.onkeypress = ( e ) => {
+  created: function () {
+    document.onkeypress = (e) => {
       if (e.key === 'Enter') this.getAllRoles()
     }
   },

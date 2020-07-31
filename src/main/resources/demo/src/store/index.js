@@ -6,7 +6,7 @@ import { getTree } from '../api/menu'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
-  modules: { user ,UserRole},
+  modules: { user, UserRole },
   state: {
     resetState: false, // 重置查询条件状态
     queryState: false,
@@ -17,8 +17,8 @@ export default new Vuex.Store({
     tempUser: {}, // 临时对象，保存新增修改对象
     checkBoxShowState: false, // 点击批量删除后的checkbox显示状态
     totalCount: 10,
-    MenuTree:[],
-    Token:[],
+    MenuTree: [],
+    Token: []
   },
   getters: {
     getResetState (state) {
@@ -48,13 +48,13 @@ export default new Vuex.Store({
     getTotalCount (state) {
       return state.totalCount
     },
-    getMenuTree(state){
+    getMenuTree (state) {
       return state.MenuTree
     },
-    getToken(state){
+    getToken (state) {
       return state.Token
     }
-   
+
   },
   mutations: {
     setResetState (state) {
@@ -68,12 +68,10 @@ export default new Vuex.Store({
       state.crudState = toState
     },
     setPageSize (state, val) {
-      if (typeof (val) === 'number')
-      state.pageSize = val
+      if (typeof (val) === 'number') { state.pageSize = val }
     },
     setPageNum (state, val) {
-      if (typeof (val) === 'number')
-      state.pageNum = val
+      if (typeof (val) === 'number') { state.pageNum = val }
     },
     setRefreshTag (state, val) {
       if (typeof (val) === 'boolean') { state.refreshTag = val }
@@ -82,28 +80,25 @@ export default new Vuex.Store({
       state.tempUser = val
     },
     setTotalCount (state, val) {
-      if (typeof (val) === 'number')
-      state.totalCount = val
+      if (typeof (val) === 'number') { state.totalCount = val }
     },
     setCheckBoxShowState (state) {
       state.checkBoxShowState = !state.checkBoxShowState
     },
-    setMenuTree(state,val){
+    setMenuTree (state, val) {
       state.MenuTree = val
     },
-    setToken(state,val){
+    setToken (state, val) {
       state.Token = val
     }
-  
 
   },
   actions: {
-    setMenuTree(state){
+    setMenuTree (state) {
       getTree().then(res => {
-        this.commit('setMenuTree',res.data)
+        this.commit('setMenuTree', res.data)
       })
-    },
-   
+    }
 
   }
 })

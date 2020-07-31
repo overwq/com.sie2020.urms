@@ -59,33 +59,36 @@ export default {
     resetForm (formName) {
       this.$refs[formName].resetFields()
     },
-    async login () {
-      const res = await login(this.user)
-      let userMenus = res.data.box.menu
-      let permissions = []
-      if(userMenus && userMenus.length > 0){
-        userMenus.forEach(t => {
-          permissions = [...permissions,t.menuUrl]
-        })
-      }
-      sessionStorage.setItem('user', JSON.stringify(res.data.box.user))
-      // sessionStorage.setItem('role', JSON.stringify(res.data.box.role))
-      sessionStorage.setItem('menu', JSON.stringify(res.data.box.menu))
-      sessionStorage.setItem('permissions', JSON.stringify(permissions))
-      setTimeout(()=>{
-        sessionStorage.removeItem('user')
-        sessionStorage.removeItem('menu')
-        sessionStorage.removeItem('permissions')
-        sessionStorage.clear()
-        this.Message.error("session 已过期，请重新登陆！")
-        router.push('/login')
-      },1000*60*30)
+    login () {
+      login(this.user).then(res => {
+        if (res.data && res.data.box ){
+          const userMenus = res.data.box.menu
+          let permissions = []
+          if (userMenus && userMenus.length > 0) {
+            userMenus.forEach(t => {
+              permissions = [...permissions, t.menuUrl]
+            })
+          }
+          sessionStorage.setItem('user', JSON.stringify(res.data.box.user))
+          // sessionStorage.setItem('role', JSON.stringify(res.data.box.role))
+          sessionStorage.setItem('menu', JSON.stringify(res.data.box.menu))
+          sessionStorage.setItem('permissions', JSON.stringify(permissions))
+          setTimeout(() => {
+            sessionStorage.removeItem('user')
+            sessionStorage.removeItem('menu')
+            sessionStorage.removeItem('permissions')
+            sessionStorage.clear()
+            this.Message.error('session 已过期，请重新登陆！')
+            router.push('/login')
+          }, 1000 * 60 * 30)
 
-      // await this.$store.dispatch('setMenuTree')
-      await router.push('/container/home')
+
+          router.push('/container/home')
+        }
+      })
+
     }
-  },
-
+  }
 
 }
 </script>

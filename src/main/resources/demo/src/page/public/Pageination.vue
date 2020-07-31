@@ -17,46 +17,41 @@
 <script>
 import { mapMutations, mapGetters } from 'vuex'
 export default {
-  data(){
-    return{
-      data_totalCount: 20
+  data () {
+    return {
+      data_totalCount: 20,
+      currentPage4: 1
     }
   },
-  props:{
-    noUsingVuex:true
+  props: {
+    noUsingVuex: true
   },
   methods: {
     ...mapMutations(['setPageSize', 'setPageNum']),
     handleSizeChange (val) {
-      if (!this.noUsingVuex){
+      if (!this.noUsingVuex) {
         this.setPageSize(val)
-      }else {
+      } else {
         // console.log("PageInation-size:"+val)
-        this.$emit('dialogPageSize',val)
+        this.$emit('dialogPageSize', val)
       }
     },
     handleCurrentChange (val) {
-      if (!this.noUsingVuex){
+      if (!this.noUsingVuex) {
         this.setPageNum(val)
-      }else {
+      } else {
         // console.log("PageInation-Num:"+val)
-        this.$emit('dialogPageNum',val)
+        this.$emit('dialogPageNum', val)
       }
-
-    }
-  },
-  data () {
-    return {
-      currentPage4: 1
     }
   },
   computed: {
     ...mapGetters(['getTotalCount']),
-    c_totalCount:{
-      get(){
+    c_totalCount: {
+      get () {
         return this.getTotalCount
       },
-      set(val){
+      set (val) {
         this.data_totalCount = this.getTotalCount
       }
     }

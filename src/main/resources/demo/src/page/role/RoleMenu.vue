@@ -26,23 +26,23 @@
 
 <script>
 import { mapGetters, mapMutations } from 'vuex'
-import { getRoleMenuByRoleId, addRoleMenu, deleteRoleMenu} from '../../api/rolemenu'
+import { getRoleMenuByRoleId, addRoleMenu, deleteRoleMenu } from '../../api/rolemenu'
 export default {
-  props:{
-    roleId:''
+  props: {
+    roleId: ''
   },
-  data(){
-    return{
-      checkedBeforeChange:[],
-      roleMenus:[],
+  data () {
+    return {
+      checkedBeforeChange: [],
+      roleMenus: [],
       defaultProps: {
         children: 'children',
-        label: 'menuName' //menuName
-      },
+        label: 'menuName' // menuName
+      }
 
     }
   },
-  mounted:function(){
+  mounted: function () {
     this.$store.dispatch('setMenuTree')
     this.getCheckedMenuTrees()
   },
@@ -71,48 +71,54 @@ export default {
     resetChecked () {
       this.$refs.tree.setCheckedKeys([])
     },
-    getCheckedMenuTrees(){
+    getCheckedMenuTrees () {
       getRoleMenuByRoleId(this.roleId).then(res => {
-        let roleMenus = res.data.data
+        const roleMenus = res.data.data
         this.roleMenus = roleMenus
         let tempRoleIds = []
-        roleMenus.forEach( sid => {
-          tempRoleIds = [...tempRoleIds,sid.menuId]
-        })
+        if(roleMenus && roleMenus.length > 0){
+          roleMenus.forEach(sid => {
+            tempRoleIds = [...tempRoleIds, sid.menuId]
+          })
+        }
         this.checkedBeforeChange = tempRoleIds
         this.$refs.tree.setCheckedKeys(tempRoleIds)
       })
     },
-    addRoleMenuRM(addRoleMenus){
+    addRoleMenuRM (addRoleMenus) {
       let roleMenus = []
-      addRoleMenus.forEach( ck => {
-        let roleMenu = {
-          'roleId' : this.roleId,
-          'menuId' : ck
-        }
-        roleMenus = [...roleMenus,roleMenu]
-      })
+      if(addRoleMenus && addRoleMenus.length > 0){
+        addRoleMenus.forEach(ck => {
+          const roleMenu = {
+            roleId: this.roleId,
+            menuId: ck
+          }
+          roleMenus = [...roleMenus, roleMenu]
+        })
+      }
       addRoleMenu(roleMenus)
     },
-    deleteRoleMenuRM(deleteRoleMenus){
+    deleteRoleMenuRM (deleteRoleMenus) {
       // deleteRoleMenus.forEach( drm => {
       //   deleteRoleMenu(drm.roleMenuId)
       // })
       let roleMenuIds = []
-      deleteRoleMenus.forEach( drm => {
-        roleMenuIds = [...roleMenuIds,drm.roleMenuId]
-      })
+      if(deleteRoleMenus && deleteRoleMenus.length > 0){
+        deleteRoleMenus.forEach(drm => {
+          roleMenuIds = [...roleMenuIds, drm.roleMenuId]
+        })
+      }
       deleteRoleMenu(roleMenuIds)
     },
-    updateRoleMenu(){
-      let checkedBefore = this.roleMenus
-      let checkedNow = this.$refs.tree.getCheckedKeys()
-      let addRoleMenus = checkedNow.filter( cn => !checkedBefore.find( cb => cb.menuId === cn))
-      let deleteRoleMenus = checkedBefore.filter( cb => !checkedNow.find( cn => cn === cb.menuId))
-      if(addRoleMenus.length > 0){
+    updateRoleMenu () {
+      const checkedBefore = this.roleMenus
+      const checkedNow = this.$refs.tree.getCheckedKeys()
+      const addRoleMenus = checkedNow.filter(cn => !checkedBefore.find(cb => cb.menuId === cn))
+      const deleteRoleMenus = checkedBefore.filter(cb => !checkedNow.find(cn => cn === cb.menuId))
+      if (addRoleMenus.length > 0) {
         this.addRoleMenuRM(addRoleMenus)
       }
-      if (deleteRoleMenus.length > 0){
+      if (deleteRoleMenus.length > 0) {
         this.deleteRoleMenuRM(deleteRoleMenus)
       }
       this.dialogShow = false
@@ -121,7 +127,7 @@ export default {
   },
   computed: {
     ...mapGetters(['getCrudState']),
-    menuTree(){
+    menuTree () {
       return this.$store.getters.getMenuTree
     },
     dialogShow: {
@@ -135,6 +141,6 @@ export default {
         this.setCrudState('')
       }
     }
-  },
+  }
 }
 </script>

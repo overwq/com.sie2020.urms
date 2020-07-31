@@ -83,7 +83,7 @@ export default {
   },
   computed: {
     setShowMenus () {
-      if (this.menus && this.menus.length > 0){
+      if (this.menus && this.menus.length > 0) {
         this.menus.forEach(menu => {
           if (menu.menuStatus === 1) {
             menu.menuStatus = '有效'

@@ -139,9 +139,11 @@ export default {
   computed: {
     ...mapState(['checkBoxShowState']),
     computedUsers () {
-      this.users.forEach(user => {
-        this.transformUserForPage(user)
-      })
+      if (this.users && this.users.length > 0) {
+        this.users.forEach(user => {
+          this.transformUserForPage(user)
+        })
+      }
       return this.users
     },
     computedDeleteAll () {

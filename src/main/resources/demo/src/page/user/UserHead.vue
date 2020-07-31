@@ -36,10 +36,10 @@ export default {
       value2: []
     }
   },
-  created: function(){
-    document.onkeypress = ( e ) => {
+  created: function () {
+    document.onkeypress = (e) => {
       if (e.key === 'Enter') this.getAjaxQueryUsers()
-     }
+    }
   },
   mounted: function () {
     this.getAjaxQueryUsers()

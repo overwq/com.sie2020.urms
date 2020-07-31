@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
-import javax.servlet.http.HttpSession;
 import java.util.*;
 
 /**
@@ -26,25 +25,21 @@ public class LoginController {
     /**
      * 根据用户名和密码返回登陆信息
      * @param user user对象 userLoginName和userPassword
-     * @param session 存储 登陆对象user 用户所属角色集合role 用户对应的角色的菜单集合menu
      * @return 登陆对象user 用户所属角色集合role 用户对应的角色的菜单集合menu
      */
     @RequestMapping("/login")
-    public String doLogin(@RequestBody User user,HttpSession session) throws JoseException {
+    public String doLogin(@RequestBody User user) throws JoseException {
         JsonObject  object = new JsonObject();
         if (service.userLogin(user)){
             String userLoginName = user.getUserLoginName();
             List<Role> roles = service.getUserRole(userLoginName);
             List<Menu> menus = service.getUserMenu(userLoginName);
-//            session.setAttribute("user",user);
-//            session.setAttribute("role",roles);
-//            session.setAttribute("menu",menus);
             User realUser = service.selectUserByLoginName(userLoginName);
             Map<String,Object> box = new HashMap<>(8);
             box.put("role",roles);
             box.put("user",realUser);
             box.put("menu",menus);
-//            box.put("token",menus);
+/*            box.put("token",menus);*/
             object.setBox(box);
             object.setState(200);
             object.setMessage("用户："+userLoginName+"登陆成功");
@@ -60,13 +55,13 @@ public class LoginController {
 
     }
 
-
+/*
     @RequestMapping("/logout")
     public void logout(HttpSession session){
         session.removeAttribute("user");
         session.removeAttribute("role");
         session.removeAttribute("menu");
-    }
+    }*/
 
 
     /**

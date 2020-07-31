@@ -45,16 +45,14 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  let user = sessionStorage.getItem('user')
+  const user = sessionStorage.getItem('user')
   if (to.path === '/login' || (user && user.length > 0)) {
     next()
   } else {
     Message.closeAll()
     Message.warning('请先登陆')
-
     next('/login')
   }
- 
 })
 
 export default router

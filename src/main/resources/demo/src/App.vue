@@ -20,7 +20,7 @@ export default {
       open: false
     }
   },
-  created:function(){
+  created: function () {
     // document.onmouseenter = (d) => {
     //   // console.log(d)
     //   console.log(1)
@@ -43,10 +43,10 @@ export default {
         Message.closeAll()
         if (this.getOpen) {
           document.getElementsByTagName('body')[0].className = 'darkModal'
-          Message.success("dark modal 已开启")
+          Message.success('dark modal 已开启')
         } else {
-          document.body.removeAttribute('class','darkModal')
-          Message.success("dark modal 已关闭")
+          document.body.removeAttribute('class', 'darkModal')
+          Message.success('dark modal 已关闭')
         }
       }
     }
@@ -60,7 +60,7 @@ export default {
       Message.closeAll()
       Message.warning('登陆信息已清除 请重新登陆 ！')
     }
-  },
+  }
 
 }
 </script>

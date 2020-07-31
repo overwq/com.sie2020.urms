@@ -32,7 +32,7 @@
 import Pageination from '../public/Pageination'
 import { mapMutations, mapGetters } from 'vuex'
 import { getRoles } from '../../api/role'
-import { addUserRole, delUserRole ,getUserRoleByUserLoginName } from '../../api/userrole'
+import { addUserRole, delUserRole, getUserRoleByUserLoginName } from '../../api/userrole'
 export default {
   name: 'Role',
   data () {
@@ -47,7 +47,7 @@ export default {
       },
       oldCheckedRoleIds: [{}],
       roles: [],
-      checkedRole:{}
+      checkedRole: {}
     }
   },
   components: {
@@ -60,14 +60,14 @@ export default {
     this.getRolesUR()
   },
   methods: {
-    ...mapMutations([ 'setRefreshTag', 'setCrudState']),
-    getDialogPageSize(val){
+    ...mapMutations(['setRefreshTag', 'setCrudState']),
+    getDialogPageSize (val) {
       this.dialogPageSize = val
     },
-    getDialogPageNum(val){
+    getDialogPageNum (val) {
       this.dialogPageNum = val
     },
-    getRolesUR(){
+    getRolesUR () {
       getRoles(this.role).then(res => {
         this.roles = res.data.data
         this.setUserRole()
@@ -76,88 +76,96 @@ export default {
     setRoles (roles) {
       this.roles = roles
     },
-    selectionChange(val){
+    selectionChange (val) {
       // console.log(this.$refs.userRoleTable.)
       this.checkedRole = val
     },
-    getCheckedUserRole(){
+    getCheckedUserRole () {
       getUserRoleByUserLoginName(this.checkedUser.userLoginName).then(res => {
         this.oldCheckedRoleIds = res.data.data
-        this.oldCheckedRoleIds.forEach(or =>{
-          let checkedSelections = this.roles.find(r=>r.roleId === or.roleId)
-          this.$refs.userRoleTable.toggleRowSelection(checkedSelections)
-        })
+        if (this.oldCheckedRoleIds && this.oldCheckedRoleIds.length > 0) {
+          this.oldCheckedRoleIds.forEach(or => {
+            const checkedSelections = this.roles.find(r => r.roleId === or.roleId)
+            this.$refs.userRoleTable.toggleRowSelection(checkedSelections)
+          })
+        }
       })
     },
-    updateUserRoleUR(){
-      let addUserRoles = this.checkedRole.filter( cr => !this.oldCheckedRoleIds.find( or => or.roleId === cr.roleId))
-      let deleteUserRoles = this.oldCheckedRoleIds.filter( or => !this.checkedRole.find(cr => cr.roleId === or.roleId))
-      if(addUserRoles.length > 0){
+    updateUserRoleUR () {
+      const addUserRoles = this.checkedRole.filter(cr => !this.oldCheckedRoleIds.find(or => or.roleId === cr.roleId))
+      const deleteUserRoles = this.oldCheckedRoleIds.filter(or => !this.checkedRole.find(cr => cr.roleId === or.roleId))
+      if (addUserRoles.length > 0) {
         this.addCheckedUserRole(addUserRoles)
       }
-      if (deleteUserRoles.length > 0 ){
+      if (deleteUserRoles.length > 0) {
         this.deleteUserRole(deleteUserRoles)
       }
       this.dialogShow = false
     },
-    setUserRole(){
+    setUserRole () {
       this.$refs.userRoleTable.clearSelection()
-       this.getCheckedUserRole()
+      this.getCheckedUserRole()
     },
-    deleteUserRole(deleteUserRoles){
+    deleteUserRole (deleteUserRoles) {
       //  deleteUserRoles.forEach(userRole => {
       //   delUserRole(userRole.userRoleId)
       // })
       let userRoleIds = []
-      deleteUserRoles.forEach( ur => {
-        userRoleIds = [...userRoleIds,ur.userRoleId]
-      })
-      delUserRole(userRoleIds)
+      if (deleteUserRoles && deleteUserRoles.length > 0) {
+        deleteUserRoles.forEach(ur => {
+          userRoleIds = [...userRoleIds, ur.userRoleId]
+        })
+        delUserRole(userRoleIds)
+      }
     },
-    addCheckedUserRole(addUserRoles){
+    addCheckedUserRole (addUserRoles) {
       let userRoles = []
-      addUserRoles.forEach(r => {
-        let userRole = {
-          userLoginName:this.checkedUser.userLoginName,
-          userId:this.checkedUser.userId,
-          roleName:r.roleName,
-          roleId : r.roleId
-        }
-        userRoles = [...userRoles,userRole]
-      })
-      addUserRole(userRoles)
+      if (addUserRoles && addUserRoles.length > 0) {
+        addUserRoles.forEach(r => {
+          const userRole = {
+            userLoginName: this.checkedUser.userLoginName,
+            userId: this.checkedUser.userId,
+            roleName: r.roleName,
+            roleId: r.roleId
+          }
+          userRoles = [...userRoles, userRole]
+          addUserRole(userRoles)
+        })
+      }
     }
   },
   computed: {
     ...mapGetters(['getCrudState']),
-    dialogPageSize:{
-      get(){
+    dialogPageSize: {
+      get () {
         return this.role.pageSize
       },
-      set(val){
+      set (val) {
         this.role.pageSize = val
         this.getRolesUR()
       }
     },
-    dialogPageNum:{
-      get(){
+    dialogPageNum: {
+      get () {
         return this.role.pageNum
       },
-      set(val){
+      set (val) {
         this.role.pageNum = val
         this.getRolesUR()
       }
     },
     showRoles () {
-      this.roles.forEach(role => {
-        if (role.roleStatus === 0) {
-          role.roleStatus = '无效'
-        } else if (role.roleStatus === 1) {
-          role.roleStatus = '有效'
-        } else {
-          role.roleStatus = '删除'
-        }
-      })
+      if (this.roles && this.roles.length > 0) {
+        this.roles.forEach(role => {
+          if (role.roleStatus === 0) {
+            role.roleStatus = '无效'
+          } else if (role.roleStatus === 1) {
+            role.roleStatus = '有效'
+          } else {
+            role.roleStatus = '删除'
+          }
+        })
+      }
       return this.roles
     },
     dialogShow: {
@@ -175,15 +183,13 @@ export default {
   },
   watch: {
   },
-  filter:{
+  filter: {
   }
-
 
 }
 </script>
 <style lang="less">
 @import url('../../style/TableStyle.less');
 @import '../../style/CheckBoxHidden.less';
-
 
 </style>

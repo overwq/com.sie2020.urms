@@ -19,5 +19,5 @@ const getCount = (menu) => http.post('/menu/select/count', menu)
 // const getMenuByName = (menuName) => http.post('/menu/select/name', menuName)
 
 export {
-  getMenus, addMenu, deleteMenu, updateMenu, getMenuById, getOptionValues, getCount,getTree
+  getMenus, addMenu, deleteMenu, updateMenu, getMenuById, getOptionValues, getCount, getTree
 }

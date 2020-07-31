@@ -28,8 +28,8 @@ export default {
       // menu: {}
     }
   },
-  created: function(){
-    document.onkeypress = ( e ) => {
+  created: function () {
+    document.onkeypress = (e) => {
       if (e.key === 'Enter') this.sendQueryMenus()
     }
   },
