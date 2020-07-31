@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.urms.mapper.RoleMapper">
+    <resultMap id="baseMap" type="com.urms.entity.Role">
+        <id column="ROLE_ID" jdbcType="NUMERIC" property="roleId" />
+        <result column="ROLE_NAME" jdbcType="VARCHAR" property="roleName" />
+        <result column="ROLE_REMARKS" jdbcType="VARCHAR" property="roleRemarks" />
+        <result column="ROLE_CODE" property="roleCode" jdbcType="VARCHAR"/>
+        <result column="ROLE_CREATE_TIME" jdbcType="TIMESTAMP" property="roleCreateTime" />
+        <result column="ROLE_INVALID_TIME" jdbcType="TIMESTAMP" property="roleInvalidTime"/>
+        <result column="ROLE_HIDDEN" jdbcType="NUMERIC" property="roleHidden" />
+        <result column="ROLE_STATUS" jdbcType="VARCHAR" property="roleStatus" />
+        <result column="ROLE_ID" property="userId"/>
+    </resultMap>
+    <sql id="baseSql">
+        ROLE_ID, ROLE_NAME,ROLE_STATUS, ROLE_CODE,ROLE_REMARKS, ROLE_CREATE_TIME, ROLE_INVALID_TIME,ROLE_HIDDEN
+    </sql>
+    <select id="selectByRoleId" parameterType="java.lang.Integer" resultMap="baseMap">
+        select
+        <include refid="baseSql"/>
+        from TB_ROLE
+        where ROLE_ID = #{roleId}
+    </select>
+    <select id="selectByRoleName" parameterType="java.lang.String" resultMap="baseMap">
+        select
+        <include refid="baseSql"/>
+        from TB_ROLE
+        where ROLE_NAME = #{roleName}
+    </select>
+    <select id="getCount" parameterType="com.urms.entity.RoleQueryCondition" resultType="java.lang.Integer">
+        select count(*) from TB_ROLE
+        <where>
+            <if test="roleName != null and roleName !=''">
+                ROLE_NAME LIKE concat('%',CONCAT(#{roleName},'%'))
+            </if>
+            <if test="roleStatus != null">
+                and ROLE_STATUS = #{roleStatus}
+            </if>
+            <if test="roleCode != null and roleCode != ''">
+                and ROLE_CODE = #{roleCode}
+            </if>
+            and ROLE_HIDDEN = 0
+        </where>
+    </select>
+    <select id="selectRoleByCondition" resultMap="baseMap" resultType="java.util.List" parameterType="com.urms.entity.RoleQueryCondition">
+        select <include refid="baseSql"/>,rownum rn
+        from (
+            select <include refid="baseSql"/>,rownum rn
+            from (
+                select <include refid="baseSql"/>,rownum rn
+                from TB_ROLE
+                <where>
+                    <if test="roleName != null and roleName !=''">
+                        ROLE_NAME LIKE concat('%',CONCAT(#{roleName},'%'))
+                    </if>
+                    <if test="roleStatus != null">
+                        and ROLE_STATUS = #{roleStatus}
+                    </if>
+                    <if test="roleCode != null and roleCode != ''">
+                        and ROLE_CODE = #{roleCode}
+                    </if>
+                    and ROLE_HIDDEN = 0
+                </where>
+            )
+            where ( #{pageSize} * #{pageNum} ) >=  rownum
+        ) where rn > ((#{pageNum} - 1) * #{pageSize})
+    </select>
+    <insert id="insertRole" parameterType="com.urms.entity.Role">
+        insert into TB_ROLE
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="roleId != null and roleId != ''">
+                ROLE_ID,
+            </if>
+            <if test="roleName != null and roleName != ''">
+                ROLE_NAME,
+            </if>
+            <if test="roleRemarks != null and roleRemarks != ''">
+                ROLE_REMARKS,
+            </if>
+            <if test="roleCreateTime != null ">
+                ROLE_CREATE_TIME,
+            </if>
+            <if test="roleInvalidTime != null ">
+                ROLE_INVALID_TIME,
+            </if>
+            <if test="roleHidden != null">
+                ROLE_HIDDEN,
+            </if>
+            <if test="roleStatus != null">
+                ROLE_STATUS,
+            </if>
+            <if test="roleCode != null">
+                ROlE_CODE,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="roleId != null and roleId != ''">
+                #{roleId,jdbcType=NUMERIC},
+            </if>
+            <if test="roleName != null and roleName != ''">
+                #{roleName,jdbcType=VARCHAR},
+            </if>
+            <if test="roleRemarks != null and roleRemarks != ''">
+                #{roleRemarks,jdbcType=VARCHAR},
+            </if>
+            <if test="roleCreateTime != null ">
+                #{roleCreateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="roleInvalidTime != null">
+                #{roleInvalidTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="roleHidden != null ">
+                #{roleHidden,jdbcType=NUMERIC},
+            </if>
+            <if test="roleStatus != null">
+                #{roleStatus},
+            </if>
+            <if test="roleCode != null">
+                #{roleCode},
+            </if>
+        </trim>
+    </insert>
+    <update id="deleteRoleById" parameterType="java.lang.Integer">
+        update TB_ROLE SET ROLE_HIDDEN = 1 where ROLE_ID = #{roleId}
+    </update>
+    <update id="updateRoleById" parameterType="com.urms.entity.Role">
+        update TB_ROLE
+        <set>
+            <if test="roleName != null and roleName != ''">
+                ROLE_NAME = #{roleName,jdbcType=VARCHAR},
+            </if>
+            <if test="roleRemarks != null and roleRemarks != ''">
+                ROLE_REMARKS = #{roleRemarks,jdbcType=VARCHAR},
+            </if>
+            <if test="roleCreateTime != null ">
+                ROLE_CREATE_TIME = #{roleCreateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="roleInvalidTime != null">
+                ROLE_INVALID_TIME = #{roleInvalidTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="roleHidden != null">
+                ROLE_HIDDEN = #{roleHidden},
+            </if>
+            <if test="roleStatus != null">
+                ROLE_STATUS = #{roleStatus},
+            </if>
+            <if test="roleCode != null">
+                ROLE_CODE = #{roleCode},
+            </if>
+        </set>
+        where ROLE_ID = #{roleId,jdbcType=NUMERIC}
+    </update>
+
+</mapper>

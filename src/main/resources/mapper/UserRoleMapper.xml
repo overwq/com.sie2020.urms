@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.urms.mapper.UserRoleMapper">
+    <resultMap id="baseMap" type="com.urms.entity.UserRole">
+        <id column="USER_ROLE_ID" jdbcType="NUMERIC" property="userRoleId" />
+        <result column="USER_LOGIN_NAME" jdbcType="VARCHAR" property="userLoginName" />
+        <result column="ROLE_NAME" jdbcType="VARCHAR" property="roleName" />
+        <result column="USER_ID" jdbcType="NUMERIC" property="userId" />
+        <result column="ROLE_ID" jdbcType="NUMERIC" property="roleId" />
+    </resultMap>
+    <resultMap id="unionMap" type="com.urms.entity.UserRole">
+        <id column="USER_ROLE_ID" jdbcType="NUMERIC" property="userRoleId" />
+        <result column="USER_LOGIN_NAME" jdbcType="VARCHAR" property="userLoginName" />
+        <result column="USER_ID" jdbcType="NUMERIC" property="userId" />
+        <result column="ROLE_ID" jdbcType="NUMERIC" property="roleId" />
+        <association property="user" javaType="com.urms.entity.User">
+            <result column="user_name"  property="userName" jdbcType="VARCHAR"/>
+        </association>
+        <association property="role" javaType="com.urms.entity.Role">
+            <result column="ROLE_NAME" jdbcType="VARCHAR" property="roleName" />
+        </association>
+    </resultMap>
+    <sql id="baseSql">
+        USER_ROLE_ID, USER_LOGIN_NAME, USER_ID, ROLE_ID,ROLE_NAME
+    </sql>
+    <sql id="unionSql">
+        USER_ROLE_ID, USER_LOGIN_NAME, USER_ID, ROLE_ID,USER_NAME,ROLE_NAME
+    </sql>
+    <select id="selectUserRoleByCondition" parameterType="com.urms.entity.UserRoleQueryCondition" resultType="java.util.List" resultMap="unionMap">
+        select distinct <include refid="unionSql"/>,rownum rn
+        from(
+            select <include refid="unionSql"/>,rownum rn
+            from (
+                select ur.USER_ROLE_ID,ur.USER_LOGIN_NAME,ur.USER_ID,ur.ROLE_ID,u.USER_NAME,r.ROLE_NAME,rownum rn
+                from TB_USER_ROLE ur
+                join TB_USER u on u.USER_ID = ur.USER_ID
+                join TB_ROLE r on r.ROLE_ID = ur.ROLE_ID
+                <where>
+                    <if test="userName != null and userName != ''">
+                        and u.USER_NAME = #{userName}
+                    </if>
+                    <if test="userLoginName != null and userLoginName != ''">
+--                         and ur.USER_LOGIN_NAME like concat(concat('%',#{userLoginName}),'%')
+                        and ur.USER_LOGIN_NAME = #{userLoginName}
+                    </if>
+                    <if test="userId != null and userId != ''">
+                        and ur.USER_ID = #{userId}
+                    </if>
+                    <if test="roleId != null and roleId != ''">
+                        and ur.ROLE_ID = #{roleId}
+                    </if>
+                </where>
+            ) where (#{pageSize} * #{pageNum}) >= rownum
+        ) where rn > ((#{pageNum} - 1 ) * #{pageSize})
+    </select>
+
+    <select id="selectByUserRoleId" parameterType="java.lang.Integer" resultMap="unionMap">
+        select ur.USER_ROLE_ID,ur.USER_LOGIN_NAME,ur.USER_ID,ur.ROLE_ID,u.USER_NAME,r.ROLE_NAME,rownum rn
+                from TB_USER_ROLE ur
+                join TB_USER u on u.USER_ID = ur.USER_ID
+                join TB_ROLE r on r.ROLE_ID = ur.ROLE_ID
+        where USER_ROLE_ID = #{userRoleId}
+    </select>
+    <select id="selectUserRoleByUserLoginName" parameterType="java.lang.String" resultMap="baseMap">
+        select <include refid="baseSql"/>
+        from TB_USER_ROLE
+        where  USER_LOGIN_NAME = #{userLoginName,jdbcType=VARCHAR}
+    </select>
+    <insert id="insertUserRole" parameterType="com.urms.entity.UserRole">
+        insert into TB_USER_ROLE
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userRoleId != null and userRoleId != ''">
+                USER_ROLE_ID,
+            </if>
+            <if test="userLoginName != null and userLoginName != ''">
+                USER_LOGIN_NAME,
+            </if>
+            <if test="userId != null and userId != ''">
+                USER_ID,
+            </if>
+            <if test="roleId != null and roleId != ''">
+                ROLE_ID,
+            </if>
+            <if test="roleName != null and roleName != ''">
+                ROLE_NAME,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userRoleId != null and userRoleId != ''">
+                #{userRoleId,jdbcType=NUMERIC},
+            </if>
+            <if test="userLoginName != null and userLoginName != ''">
+                #{userLoginName,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null and userId != ''">
+                #{userId,jdbcType=NUMERIC},
+            </if>
+            <if test="roleId != null and roleId != ''">
+                #{roleId,jdbcType=NUMERIC},
+            </if>
+            <if test="roleName != null and roleName != ''">
+                #{roleName,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <delete id="deleteUserRoleById" parameterType="java.lang.Integer">
+        delete from TB_USER_ROLE
+        where USER_ROLE_ID  = #{id}
+    </delete>
+    <update id="updateUserRoleById" parameterType="com.urms.entity.UserRole">
+        update TB_USER_ROLE
+        <set>
+            <if test="userLoginName != null and userLoginName != ''">
+                USER_LOGIN_NAME = #{userLoginName,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null and userId != ''">
+                USER_ID = #{userId,jdbcType=NUMERIC},
+            </if>
+            <if test="roleId != null and roleId != ''">
+                ROLE_ID = #{roleId,jdbcType=NUMERIC},
+            </if>
+        </set>
+        where USER_ROLE_ID = #{userRoleId,jdbcType=NUMERIC}
+    </update>
+
+</mapper>
