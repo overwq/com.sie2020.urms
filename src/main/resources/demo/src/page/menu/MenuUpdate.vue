@@ -72,6 +72,7 @@ export default {
           updateMenu(JSON.stringify(this.menu)).then(res => {
             this.setCrudState('')
             this.setRefreshTag(true)
+            this.$store.dispatch('setMenuTree')
           })
         } else {
           return false

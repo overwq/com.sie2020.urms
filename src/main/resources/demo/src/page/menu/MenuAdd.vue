@@ -68,6 +68,7 @@ export default {
           addMenu(this.menu).then(res => {
             this.setCrudState('')
             this.setRefreshTag(true)
+            this.$store.dispatch('setMenuTree')
           })
         } else {
           return false

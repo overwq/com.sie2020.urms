@@ -34,7 +34,7 @@ export default {
   mixins: [UserMixin],
   computed: {
     getUserName () {
-      var user = JSON.parse(sessionStorage.getItem('user'))
+      var user = JSON.parse(localStorage.getItem('user'))
       return user.userName
     }
   },

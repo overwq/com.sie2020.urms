@@ -15,11 +15,35 @@
     <sql id="baseSql">
         ROLE_ID, ROLE_NAME,ROLE_STATUS, ROLE_CODE,ROLE_REMARKS, ROLE_CREATE_TIME, ROLE_INVALID_TIME,ROLE_HIDDEN
     </sql>
+    <sql id="menuSql">
+        m.MENU_ID, m.MENU_TYPE, m.MENU_PARENT_NAME,m.MENU_NAME, m.MENU_PARENT_ID, m.MENU_STATUS,
+        m.MENU_QUEUE_NUMBER, m.MENU_URL,m.MENU_OPCODE, m.MENU_REMARKS, m.MENU_HIDDEN
+    </sql>
+    <resultMap id="menuMap" type="com.urms.entity.Menu">
+        <id column="MENU_ID" jdbcType="NUMERIC" property="menuId" />
+        <result column="MENU_TYPE" jdbcType="VARCHAR" property="menuType" />
+        <result column="MENU_NAME" jdbcType="VARCHAR" property="menuName" />
+        <result column="MENU_PARENT_ID" jdbcType="NUMERIC" property="menuParentId" />
+        <result column="MENU_STATUS" jdbcType="VARCHAR" property="menuStatus" />
+        <result column="MENU_QUEUE_NUMBER" jdbcType="NUMERIC" property="menuQueueNumber" />
+        <result column="MENU_URL" jdbcType="VARCHAR" property="menuUrl" />
+        <result column="MENU_OPCODE" jdbcType="VARCHAR" property="menuOpcode" />
+        <result column="MENU_REMARKS" jdbcType="VARCHAR" property="menuRemarks" />
+        <result column="MENU_HIDDEN" jdbcType="NUMERIC" property="menuHidden" />
+        <result column="MENU_PARENT_NAME" jdbcType="VARCHAR" property="menuParentName" />
+    </resultMap>
     <select id="selectByRoleId" parameterType="java.lang.Integer" resultMap="baseMap">
         select
         <include refid="baseSql"/>
         from TB_ROLE
         where ROLE_ID = #{roleId}
+    </select>
+    <select id="getRoleMenu" parameterType="java.lang.Integer" resultMap="menuMap">
+        select distinct
+        <include refid="menuSql"></include>
+        from tb_role_menu rm
+        join tb_menu m on m.menu_id = rm.menu_id
+        where rm.role_id= #{roleId}
     </select>
     <select id="selectByRoleName" parameterType="java.lang.String" resultMap="baseMap">
         select

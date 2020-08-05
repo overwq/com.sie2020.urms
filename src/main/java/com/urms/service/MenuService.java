@@ -57,6 +57,8 @@ public interface MenuService {
 
     List<Menu> getTreeMenu();
 
+    List<Menu> getTreeMenuByRoleId(int roleId);
+
     Integer getCount(MenuQueryCondition condition);
 
 }

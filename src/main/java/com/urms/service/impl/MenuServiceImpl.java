@@ -49,6 +49,7 @@ public class MenuServiceImpl implements MenuService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Integer updateMenuById(Menu menu) {
+        menu.setMenuParentId(mapper.selectByMenuName(menu.getMenuParentName()).getMenuId());
         return mapper.updateMenuById(menu);
     }
 
@@ -63,6 +64,11 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public List<Menu> getTreeMenu() {
         return mapper.getTreeMenu();
+    }
+
+    @Override
+    public List<Menu> getTreeMenuByRoleId(int roleId) {
+        return mapper.getTreeMenuByRoleId(roleId);
     }
 
     @Override

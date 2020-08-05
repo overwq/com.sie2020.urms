@@ -5,10 +5,13 @@ import com.urms.entity.User;
 import com.urms.entity.UserQueryCondition;
 import com.urms.service.UserService;
 import com.urms.service.impl.UserServiceImpl;
+import com.urms.tools.Tool;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 
 @SpringBootTest
@@ -23,6 +26,19 @@ public class UserTest {
         user.setUserLoginName("red");
         user.setUserPassword("red");
         System.out.println(service.userLogin(user));
+    }
+
+    @Test
+    @Transactional
+    public void updateUserPasswordToMd5Test(){
+        UserQueryCondition condition = new UserQueryCondition();
+        List<User> users = service.selectAll(condition);
+        System.out.println(JSON.toJSONString(users));
+//        for (User user : users){
+//            user.setUserPassword(Tool.md5(user.getUserPassword()));
+//            service.updateUserById(user);
+//        }
+        System.out.println(service.selectAll(condition));
     }
 
     @Test

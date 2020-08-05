@@ -9,7 +9,8 @@ intstance.interceptors.request.use(config => {
 
   const url = config.url.trim().split('/')
   if (url[1] === 'login') return config
-  const permissions = JSON.parse(sessionStorage.getItem('permissions'))
+
+  const permissions = JSON.parse(localStorage.getItem('permissions'))
   if (!permissions && permissions.length > 0) {
     vuex.commit('setToken', permissions)
   }
@@ -32,8 +33,6 @@ intstance.interceptors.request.use(config => {
     config.headers.token = permissions
     return config
   } else {
-    // const menus = JSON.parse(sessionStorage.getItem('menu'))
-    // const menu = menus.filter(m => m.menuUrl === config.url.substr(1, config.url.length - 1))
     config.url = '/user/no/permission'
     return config
   }

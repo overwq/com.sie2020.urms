@@ -75,19 +75,19 @@ export default {
       getRoleMenuByRoleId(this.roleId).then(res => {
         const roleMenus = res.data.data
         this.roleMenus = roleMenus
-        let tempRoleIds = []
-        if(roleMenus && roleMenus.length > 0){
+        let tempMenuIds = []
+        if (roleMenus && roleMenus.length > 0) {
           roleMenus.forEach(sid => {
-            tempRoleIds = [...tempRoleIds, sid.menuId]
+            tempMenuIds = [...tempMenuIds, sid.menuId]
           })
         }
-        this.checkedBeforeChange = tempRoleIds
-        this.$refs.tree.setCheckedKeys(tempRoleIds)
+        this.checkedBeforeChange = tempMenuIds
+        this.$refs.tree.setCheckedKeys(tempMenuIds)
       })
     },
     addRoleMenuRM (addRoleMenus) {
       let roleMenus = []
-      if(addRoleMenus && addRoleMenus.length > 0){
+      if (addRoleMenus && addRoleMenus.length > 0) {
         addRoleMenus.forEach(ck => {
           const roleMenu = {
             roleId: this.roleId,
@@ -103,7 +103,7 @@ export default {
       //   deleteRoleMenu(drm.roleMenuId)
       // })
       let roleMenuIds = []
-      if(deleteRoleMenus && deleteRoleMenus.length > 0){
+      if (deleteRoleMenus && deleteRoleMenus.length > 0) {
         deleteRoleMenus.forEach(drm => {
           roleMenuIds = [...roleMenuIds, drm.roleMenuId]
         })

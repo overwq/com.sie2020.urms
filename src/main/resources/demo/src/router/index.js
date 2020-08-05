@@ -36,6 +36,11 @@ const routes = [
     name: 'Login',
     component: () =>
       import('../page/Login.vue')
+  },
+  {
+    path: '/',
+    component: () =>
+      import('../page/Login.vue')
   }
 
 ]
@@ -45,7 +50,7 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const user = sessionStorage.getItem('user')
+  const user = localStorage.getItem('user')
   if (to.path === '/login' || (user && user.length > 0)) {
     next()
   } else {

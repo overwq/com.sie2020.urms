@@ -10,10 +10,12 @@ const deleteRole = (roleId) => http.post('/role/delete', roleId)
 
 const getRoleById = (roleId) => http.post('/role/select/id', roleId)
 
+const getRoleMenusByRoleId = (roleId) => http.post('/role/select/menu', roleId)
+
 const getRoleByName = (roleName) => http.post('/role/select/name', roleName)
 
 const getCount = (role) => http.post('/role/select/count', role)
 
 export {
-  getRoles, addRole, updateRole, deleteRole, getRoleById, getRoleByName, getCount
+  getRoles, addRole, updateRole, deleteRole, getRoleById, getRoleByName, getCount, getRoleMenusByRoleId
 }

@@ -1,9 +1,20 @@
 <template>
   <div class="tableStyle">
     <el-dialog :visible.sync="dialogShow" center width="800px" title="设置用户所属角色" v-on:open="setUserRole()" >
-    <div class="UserAddSlot" style="margin:-40px 0 0 0px;text-align:left;">用户名 :<slot></slot></div>
-     <el-table stripe  :data="showRoles"  height="480" ref="userRoleTable" @selection-change="selectionChange">
+    <div class="UserAddSlot" style="margin:-40px 0 0 0px;text-align:left;">用户名 :<slot></slot>查看菜单前请先点击角色</div>
+     <el-table  @row-click="getCheckedMenuTrees" stripe  :data="showRoles"  height="480" ref="userRoleTable" @selection-change="selectionChange">
        <el-table-column type="selection" width="55"></el-table-column>
+       <el-table-column type="expand" label-position="left" label="查看菜单" width="90px">
+         <template>
+            <el-tree
+            :data="cmenuTree"
+            default-expand-all
+            node-key="menuId"
+            ref="tree"
+            :props="defaultProps">
+          </el-tree>
+         </template>
+       </el-table-column>
         <el-table-column label="序号" min-width="50">
           <template slot-scope="role">
             <span>{{role.$index+1}}</span>
@@ -14,6 +25,7 @@
         <el-table-column prop="roleCreateTime" label="生效日期" min-width="100"></el-table-column>
         <el-table-column prop="roleInvalidTime" label="失效日期" min-width="100"></el-table-column>
         <el-table-column prop="roleStatus" label="状态" min-width="50"></el-table-column>
+
       </el-table>
       <div class="dialog-footer" slot="footer">
         <el-button @click="updateUserRoleUR" type="primary" class="biggerBtn">设置角色</el-button>
@@ -31,7 +43,8 @@
 <script>
 import Pageination from '../public/Pageination'
 import { mapMutations, mapGetters } from 'vuex'
-import { getRoles } from '../../api/role'
+import { getRoles, getCount, getRoleMenusByRoleId } from '../../api/role'
+// import { getRoleMenuByRoleId } from '../../api/rolemenu'
 import { addUserRole, delUserRole, getUserRoleByUserLoginName } from '../../api/userrole'
 export default {
   name: 'Role',
@@ -47,7 +60,12 @@ export default {
       },
       oldCheckedRoleIds: [{}],
       roles: [],
-      checkedRole: {}
+      defaultProps: {
+        children: 'children',
+        label: 'menuName' // menuName
+      },
+      checkedRole: {},
+      menuTree: []
     }
   },
   components: {
@@ -58,6 +76,7 @@ export default {
   },
   mounted: function () {
     this.getRolesUR()
+    this.$store.dispatch('setMenuTree')
   },
   methods: {
     ...mapMutations(['setRefreshTag', 'setCrudState']),
@@ -71,6 +90,7 @@ export default {
       getRoles(this.role).then(res => {
         this.roles = res.data.data
         this.setUserRole()
+        this.setRoleTotalCount()
       })
     },
     setRoles (roles) {
@@ -86,7 +106,9 @@ export default {
         if (this.oldCheckedRoleIds && this.oldCheckedRoleIds.length > 0) {
           this.oldCheckedRoleIds.forEach(or => {
             const checkedSelections = this.roles.find(r => r.roleId === or.roleId)
-            this.$refs.userRoleTable.toggleRowSelection(checkedSelections)
+            if (this.$refs.userRoleTable) {
+              this.$refs.userRoleTable.toggleRowSelection(checkedSelections)
+            }
           })
         }
       })
@@ -103,7 +125,9 @@ export default {
       this.dialogShow = false
     },
     setUserRole () {
-      this.$refs.userRoleTable.clearSelection()
+      if (this.$refs.userRoleTable) {
+        this.$refs.userRoleTable.clearSelection()
+      }
       this.getCheckedUserRole()
     },
     deleteUserRole (deleteUserRoles) {
@@ -132,7 +156,20 @@ export default {
           addUserRole(userRoles)
         })
       }
+    },
+    setRoleTotalCount () {
+      this.countRole = JSON.parse(JSON.stringify(this.role))
+      getCount(this.countRole).then(res => {
+        this.$store.commit('setTotalCount', res.data)
+      })
+    },
+    getCheckedMenuTrees (role) {
+      const roleId = role.roleId
+      getRoleMenusByRoleId(roleId).then(res => {
+        this.cmenuTree = res.data.data
+      })
     }
+
   },
   computed: {
     ...mapGetters(['getCrudState']),
@@ -178,6 +215,15 @@ export default {
       set () {
         this.setCrudState('')
       }
+    },
+    cmenuTree: {
+      get () {
+        return this.menuTree
+      },
+      set (val) {
+        this.menuTree = val
+      }
+
     }
 
   },
@@ -188,8 +234,10 @@ export default {
 
 }
 </script>
-<style lang="less">
+<style lang="less" scope >
 @import url('../../style/TableStyle.less');
 @import '../../style/CheckBoxHidden.less';
-
+#expandMenu {
+  background-color: red;
+}
 </style>

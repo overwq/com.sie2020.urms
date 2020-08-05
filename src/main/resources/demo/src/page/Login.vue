@@ -2,23 +2,10 @@
   <div id="LoginPage">
     <el-form :model="user" ref="user" label-width="100px" class="demo-dynamic">
       <el-button type="info" plain class="info-btn">用户权限管理系统</el-button>
-      <!-- <div></div> -->
-      <el-form-item
-        prop="userLoginName"
-        label="用户名"
-        :rules="[
-          { required: true, message: '请输入用户名', trigger: 'blur' },
-          { type: '', message: '请输入正确的用户名', trigger: ['blur', 'change'] }
-        ]">
+      <el-form-item prop="userLoginName" label="用户名" :rules="rules.userLoginName">
         <el-input v-model="user.userLoginName"></el-input>
       </el-form-item>
-      <el-form-item
-        prop="userPassword"
-        label="密码"
-        :rules="[
-          { required: true, message: '密码', trigger: 'blur' },
-          { type: '', message: '密码不正确', trigger: ['blur', 'change'] }
-        ]">
+      <el-form-item prop="userPassword" label="密码" :rules="rules.userPassword">
         <el-input type="password" v-model="user.userPassword"></el-input>
       </el-form-item>
       <el-form-item>
@@ -31,18 +18,38 @@
 <script>
 import { login } from '../api/user'
 import router from '../router/index'
+import { Message } from 'element-ui'
 export default {
   data () {
     return {
       user: {
         userPassword: '',
         userLoginName: ''
+      },
+      rules: {
+        userLoginName: [
+          { max: 50, trigger: 'blur', required: true, message: '用户名不能为空' }
+        ],
+        userPassword: [
+          { required: true, message: '请输入密码', trigger: 'change' },
+          { max: 20, message: '长度为 6 到 20 个字符', trigger: 'blur' }
+        ]
       }
+
     }
   },
   created: function () {
     document.onkeypress = (e) => {
       if (e.key === 'Enter') this.submitForm('user')
+    }
+  },
+  mounted: function () {
+    const user = localStorage.getItem('user')
+    if (user) {
+      Message.success('已获取登陆信息 ， 3秒后自动跳转 ！')
+      setTimeout(() => {
+        router.push('/container/home')
+      }, 3000)
     }
   },
   methods: {
@@ -51,7 +58,7 @@ export default {
         if (valid) {
           this.login()
         } else {
-          alert('user name or password is null or not correct!')
+          Message.error('用户名或密码不正确,请重新输入!')
           return false
         }
       })
@@ -61,7 +68,7 @@ export default {
     },
     login () {
       login(this.user).then(res => {
-        if (res.data && res.data.box ){
+        if (res.data && res.data.box) {
           const userMenus = res.data.box.menu
           let permissions = []
           if (userMenus && userMenus.length > 0) {
@@ -69,24 +76,24 @@ export default {
               permissions = [...permissions, t.menuUrl]
             })
           }
-          sessionStorage.setItem('user', JSON.stringify(res.data.box.user))
-          // sessionStorage.setItem('role', JSON.stringify(res.data.box.role))
-          sessionStorage.setItem('menu', JSON.stringify(res.data.box.menu))
-          sessionStorage.setItem('permissions', JSON.stringify(permissions))
-          setTimeout(() => {
-            sessionStorage.removeItem('user')
-            sessionStorage.removeItem('menu')
-            sessionStorage.removeItem('permissions')
-            sessionStorage.clear()
-            this.Message.error('session 已过期，请重新登陆！')
-            router.push('/login')
-          }, 1000 * 60 * 30)
-
-
+          localStorage.setItem('user', JSON.stringify(res.data.box.user))
+          localStorage.setItem('menu', JSON.stringify(res.data.box.menu))
+          localStorage.setItem('permissions', JSON.stringify(permissions))
+          // localStorage.setItem('decode', encodeURI(JSON.stringify(res.data.box.menu)))
           router.push('/container/home')
         }
       })
-
+    }
+  },
+  computed: {
+    decodeUserPassword: {
+      get () {
+        return this.userPassword
+      },
+      set (val) {
+        this.userPassword = window.btoa(val)
+        console.log(this.userPassword)
+      }
     }
   }
 

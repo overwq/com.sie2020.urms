@@ -58,6 +58,7 @@ export default {
       this.menus = menus
     },
     deleteMenuInfo (id) {
+      console.log(id)
       this.$confirm('确认要删除该用户吗？', '提示', {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
@@ -65,6 +66,7 @@ export default {
       }).then(() => {
         deleteMenu(id).then(res => {
           this.setRefreshTag(true)
+          this.$store.dispatch('setMenuTree')
         })
       })
     },
@@ -77,6 +79,7 @@ export default {
       this.disableMenu.menuStatus = 0
       updateMenu(JSON.stringify(this.disableMenu)).then(res => {
         this.setRefreshTag(true)
+        this.$store.dispatch('setMenuTree')
       })
     }
 

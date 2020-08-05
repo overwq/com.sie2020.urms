@@ -79,6 +79,7 @@ public class UserController {
         if (Tool.isEmpty(user)) {
             return JSON.toJSONString(Tool.setErrorMessage(jsonObject));
         }
+        user.setUserPassword(Tool.md5(user.getUserPassword()));
         int result = service.insertUser(user);
         Tool.getResult(jsonObject,result,"用户添加成功","用户添加失败");
 
@@ -122,6 +123,7 @@ public class UserController {
         if (Tool.isEmpty(user)){
             return  JSON.toJSONString(Tool.setErrorMessage(object));
         }
+        user.setUserPassword(Tool.md5(user.getUserPassword()));
         Integer result = service.updateUserById(user);
         Tool.getResult(object,result,"用户信息修改成功","用户信息修改失败");
 
@@ -147,7 +149,7 @@ public class UserController {
     @RequestMapping("/user/no/permission")
     public String setNoPermissionMessage(){
         JsonObject object = new JsonObject();
-        Tool.setErrorMessage(object,"小伙子 你没有权限 ！");
+        Tool.setErrorMessage(object,"别点了 你没有权限！");
         return JSON.toJSONString(object);
     }
 

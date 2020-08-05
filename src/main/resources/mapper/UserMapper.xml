@@ -154,7 +154,7 @@
         where ur.USER_LOGIN_NAME = #{userLoginName}
     </select>
     <select id="getUserMenu" parameterType="java.lang.String" resultMap="menuMap">
-        select
+        select distinct
         <include refid="menuSql"></include>
         from tb_user_role ur
         join tb_role_menu rm on ur.role_id = rm.role_id

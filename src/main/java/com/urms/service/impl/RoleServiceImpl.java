@@ -1,5 +1,6 @@
 package com.urms.service.impl;
 
+import com.urms.entity.Menu;
 import com.urms.entity.Role;
 import com.urms.entity.RoleQueryCondition;
 import com.urms.mapper.RoleMapper;
@@ -56,6 +57,11 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public Integer getCount(RoleQueryCondition condition) {
         return mapper.getCount(condition);
+    }
+
+    @Override
+    public List<Menu> getRoleMenu(Integer roleId) {
+        return mapper.getRoleMenu(roleId);
     }
 
 
