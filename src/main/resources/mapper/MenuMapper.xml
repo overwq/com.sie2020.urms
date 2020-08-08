@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.urms.mapper.MenuMapper">
+    <resultMap id="baseMap" type="com.urms.entity.Menu">
+        <id column="MENU_ID" jdbcType="NUMERIC" property="menuId" />
+        <result column="MENU_TYPE" jdbcType="VARCHAR" property="menuType" />
+        <result column="MENU_NAME" jdbcType="VARCHAR" property="menuName" />
+        <result column="MENU_PARENT_ID" jdbcType="NUMERIC" property="menuParentId" />
+        <result column="MENU_STATUS" jdbcType="VARCHAR" property="menuStatus" />
+        <result column="MENU_QUEUE_NUMBER" jdbcType="NUMERIC" property="menuQueueNumber" />
+        <result column="MENU_URL" jdbcType="VARCHAR" property="menuUrl" />
+        <result column="MENU_OPCODE" jdbcType="VARCHAR" property="menuOpcode" />
+        <result column="MENU_REMARKS" jdbcType="VARCHAR" property="menuRemarks" />
+        <result column="MENU_HIDDEN" jdbcType="NUMERIC" property="menuHidden" />
+        <result column="MENU_PARENT_NAME" jdbcType="VARCHAR" property="menuParentName" />
+    </resultMap>
+    <resultMap id="treeMap" type="com.urms.entity.Menu">
+        <id column="p1_MENU_ID" jdbcType="NUMERIC" property="menuId" />
+        <result column="p1_MENU_TYPE" jdbcType="VARCHAR" property="menuType" />
+        <result column="p1_MENU_NAME" jdbcType="VARCHAR" property="menuName" />
+        <result column="p1_MENU_PARENT_ID" jdbcType="NUMERIC" property="menuParentId" />
+        <result column="p1_MENU_STATUS" jdbcType="VARCHAR" property="menuStatus" />
+        <result column="p1_MENU_QUEUE_NUMBER" jdbcType="NUMERIC" property="menuQueueNumber" />
+        <result column="p1_MENU_URL" jdbcType="VARCHAR" property="menuUrl" />
+        <result column="p1_MENU_OPCODE" jdbcType="VARCHAR" property="menuOpcode" />
+        <result column="p1_MENU_REMARKS" jdbcType="VARCHAR" property="menuRemarks" />
+        <result column="p1_MENU_HIDDEN" jdbcType="NUMERIC" property="menuHidden" />
+        <result column="p1_MENU_PARENT_NAME" jdbcType="VARCHAR" property="menuParentName" />
+        <collection property="children"  ofType="com.urms.entity.Menu">
+            <id column="p2_MENU_ID" jdbcType="NUMERIC" property="menuId" />
+            <result column="p2_MENU_TYPE" jdbcType="VARCHAR" property="menuType" />
+            <result column="p2_MENU_NAME" jdbcType="VARCHAR" property="menuName" />
+            <result column="p2_MENU_PARENT_ID" jdbcType="NUMERIC" property="menuParentId" />
+            <result column="p2_MENU_STATUS" jdbcType="VARCHAR" property="menuStatus" />
+            <result column="p2_MENU_QUEUE_NUMBER" jdbcType="NUMERIC" property="menuQueueNumber" />
+            <result column="p2_MENU_URL" jdbcType="VARCHAR" property="menuUrl" />
+            <result column="p2_MENU_OPCODE" jdbcType="VARCHAR" property="menuOpcode" />
+            <result column="p2_MENU_REMARKS" jdbcType="VARCHAR" property="menuRemarks" />
+            <result column="p2_MENU_HIDDEN" jdbcType="NUMERIC" property="menuHidden" />
+            <result column="p2_MENU_PARENT_NAME" jdbcType="VARCHAR" property="menuParentName" />
+            <collection property="children"  ofType="com.urms.entity.Menu">
+                <id column="p3_MENU_ID" jdbcType="NUMERIC" property="menuId" />
+                <result column="p3_MENU_TYPE" jdbcType="VARCHAR" property="menuType" />
+                <result column="p3_MENU_NAME" jdbcType="VARCHAR" property="menuName" />
+                <result column="p3_MENU_PARENT_ID" jdbcType="NUMERIC" property="menuParentId" />
+                <result column="p3_MENU_STATUS" jdbcType="VARCHAR" property="menuStatus" />
+                <result column="p3_MENU_QUEUE_NUMBER" jdbcType="NUMERIC" property="menuQueueNumber" />
+                <result column="p3_MENU_URL" jdbcType="VARCHAR" property="menuUrl" />
+                <result column="p3_MENU_OPCODE" jdbcType="VARCHAR" property="menuOpcode" />
+                <result column="p3_MENU_REMARKS" jdbcType="VARCHAR" property="menuRemarks" />
+                <result column="p3_MENU_HIDDEN" jdbcType="NUMERIC" property="menuHidden" />
+                <result column="p3_MENU_PARENT_NAME" jdbcType="VARCHAR" property="menuParentName" />
+            </collection>
+        </collection>
+    </resultMap>
+    <sql id="baseSql">
+        MENU_ID, MENU_TYPE, MENU_PARENT_NAME,MENU_NAME, MENU_PARENT_ID, MENU_STATUS, MENU_QUEUE_NUMBER, MENU_URL,
+        MENU_OPCODE, MENU_REMARKS, MENU_HIDDEN
+    </sql>
+    <sql id="rootSql">
+        p1.MENU_ID p1_MENU_ID, p1.MENU_TYPE p1_MENU_TYPE, p1.MENU_PARENT_NAME p1_MENU_PARENT_NAME,
+        p1.MENU_NAME p1_MENU_NAME,p1.MENU_PARENT_ID p1_MENU_PARENT_ID, p1.MENU_STATUS p1_MENU_STATUS,
+        p1.MENU_QUEUE_NUMBER p1_MENU_QUEUE_NUMBER, p1.MENU_URL p1_MENU_URL,
+        p1.MENU_OPCODE p1_MENU_OPCODE, p1.MENU_REMARKS p1_MENU_REMARKS, p1.MENU_HIDDEN p1_MENU_HIDDEN
+    </sql>
+    <sql id="fatherSql">
+        p2.MENU_ID p2_MENU_ID, p2.MENU_TYPE p2_MENU_TYPE, p2.MENU_PARENT_NAME p2_MENU_PARENT_NAME,
+        p2.MENU_NAME p2_MENU_NAME, p2.MENU_PARENT_ID p2_MENU_PARENT_ID, p2.MENU_STATUS p2_MENU_STATUS,
+        p2.MENU_QUEUE_NUMBER p2_MENU_QUEUE_NUMBER, p2.MENU_URL p2_MENU_URL,
+        p2.MENU_OPCODE p2_MENU_OPCODE, p2.MENU_REMARKS p2_MENU_REMARKS, p2.MENU_HIDDEN p2_MENU_HIDDEN
+    </sql>
+    <sql id="childSql">
+        p3.MENU_ID p3_MENU_ID, p3.MENU_TYPE p3_MENU_TYPE, p3.MENU_PARENT_NAME p3_MENU_PARENT_NAME,
+        p3.MENU_NAME p3_MENU_NAME, p3.MENU_PARENT_ID p3_MENU_PARENT_ID, p3.MENU_STATUS p3_MENU_STATUS,
+        p3.MENU_QUEUE_NUMBER p3_MENU_QUEUE_NUMBER, p3.MENU_URL p3_MENU_URL,
+        p3.MENU_OPCODE p3_MENU_OPCODE, p3.MENU_REMARKS p3_MENU_REMARKS, p3.MENU_HIDDEN p3_MENU_HIDDEN
+    </sql>
+    <select id="getMenuType" resultType="java.lang.String">
+        select DISTINCT MENU_TYPE from TB_MENU
+    </select>
+    <select id="getTreeMenu"  resultMap="treeMap">
+        select
+        <include refid="rootSql"/>,<include refid="fatherSql"/>,<include refid="childSql"/>
+        from TB_MENU p1
+        join TB_MENU p2 on p1.MENU_ID = p2.MENU_PARENT_ID
+        join TB_MENU p3 on p2.MENU_ID = p3.MENU_PARENT_ID
+        where p1.MENU_HIDDEN = 0 and p2.MENU_HIDDEN = 0 and p3.MENU_HIDDEN = 0
+        order by p3.MENU_QUEUE_NUMBER
+    </select>
+    <select id="getTreeMenuByRoleId"  resultMap="treeMap" parameterType="java.lang.Integer">
+        select
+        <include refid="rootSql"/>,<include refid="fatherSql"/>,<include refid="childSql"/>
+        from TB_MENU p1
+        join TB_MENU p2 on p1.MENU_ID = p2.MENU_PARENT_ID
+        join TB_MENU p3 on p2.MENU_ID = p3.MENU_PARENT_ID
+        <if test="roleId != null and roleId!= ''">
+            join TB_ROLE_MENU rm on (rm.MENU_ID = p1.MENU_ID or rm.MENU_ID = p2.MENU_ID or rm.MENU_ID = p3.MENU_ID)
+        </if>
+        where p1.MENU_HIDDEN = 0 and p2.MENU_HIDDEN = 0 and p3.MENU_HIDDEN = 0
+        <if test="roleId != null and roleId!= ''">
+            and rm.ROLE_ID = #{roleId}
+        </if>
+        order by p3.MENU_QUEUE_NUMBER
+    </select>
+    <select id="getOptionParentMenuName"  resultType="java.util.Map">
+        SELECT MENU_NAME ,MENU_ID FROM TB_MENU WHERE MENU_TYPE IN ('目录','菜单')
+    </select>
+    <select id="selectByMenuId" parameterType="java.lang.Integer" resultMap="baseMap">
+        select
+        <include refid="baseSql"/>
+        from TB_MENU
+        where MENU_ID = #{menuId}
+    </select>
+    <select id="selectByMenuName" parameterType="java.lang.String" resultMap="baseMap">
+        select
+        <include refid="baseSql"/>
+        from TB_MENU
+        where MENU_NAME = #{menuName}
+    </select>
+    <select id="getCount" parameterType="com.urms.entity.MenuQueryCondition" resultType="java.lang.Integer">
+        select count(*) from TB_MENU
+        <where>
+            <if test="menuName != null and menuName != ''">
+                and MENU_NAME like concat(concat('%',#{menuName}),'%')
+            </if>
+            <if test="menuType != null and menuType != ''">
+                and MENU_TYPE = #{menuType}
+            </if>
+            <if test="menuStatus != null and menuStatus != ''">
+                and MENU_STATUS = #{menuStatus}
+            </if>
+            and MENU_HIDDEN = 0
+        </where>
+    </select>
+    <select id="selectMenuByCondition" parameterType="com.urms.entity.MenuQueryCondition" resultMap="baseMap" resultType="java.util.List">
+        select <include refid="baseSql"/>,rownum rn
+        from(
+            select <include refid="baseSql"/>,rownum rn
+            from(
+                select <include refid="baseSql"/>,rownum rn
+                from TB_MENU
+                <where>
+                    <if test="menuName != null and menuName != ''">
+                        and MENU_NAME like concat(concat('%',#{menuName}),'%')
+                    </if>
+                    <if test="menuType != null and menuType != ''">
+                        and MENU_TYPE = #{menuType}
+                    </if>
+                    <if test="menuStatus != null and menuStatus != ''">
+                        and MENU_STATUS = #{menuStatus}
+                    </if>
+                    and MENU_HIDDEN = 0
+                </where>
+                order by MENU_ID
+            ) where (#{pageSize} * #{pageNum}) >= rownum
+        ) where rn > ((#{pageNum} - 1) * #{pageSize})
+
+    </select>
+    <insert id="insertMenu" parameterType="com.urms.entity.Menu">
+        insert into TB_MENU
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="menuId != null and menuId != ''">
+                MENU_ID,
+            </if>
+            <if test="menuType != null">
+                MENU_TYPE,
+            </if>
+            <if test="menuName != null and menuName != ''">
+                MENU_NAME,
+            </if>
+            <if test="menuParentId != null and menuParentId != ''">
+                MENU_PARENT_ID,
+            </if>
+            <if test="menuStatus != null">
+                MENU_STATUS,
+            </if>
+            <if test="menuQueueNumber != null">
+                MENU_QUEUE_NUMBER,
+            </if>
+            <if test="menuUrl != null and menuUrl != ''">
+                MENU_URL,
+            </if>
+            <if test="menuOpcode != null and menuOpcode != ''">
+                MENU_OPCODE,
+            </if>
+            <if test="menuRemarks != null and menuRemarks != ''">
+                MENU_REMARKS,
+            </if>
+            <if test="menuHidden != null">
+                MENU_HIDDEN,
+            </if>
+            <if test="menuParentName != null">
+                MENU_PARENT_NAME,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="menuId != null and menuId != ''">
+                #{menuId,jdbcType=NUMERIC},
+            </if>
+            <if test="menuType != null">
+                #{menuType,jdbcType=VARCHAR},
+            </if>
+            <if test="menuName != null and menuName != ''">
+                #{menuName,jdbcType=VARCHAR},
+            </if>
+            <if test="menuParentId != null and menuParentId != ''">
+                #{menuParentId,jdbcType=NUMERIC},
+            </if>
+            <if test="menuStatus != null">
+                #{menuStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="menuQueueNumber != null">
+                #{menuQueueNumber,jdbcType=NUMERIC},
+            </if>
+            <if test="menuUrl != null and menuUrl != ''">
+                #{menuUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="menuOpcode != null and menuOpcode != ''">
+                #{menuOpcode,jdbcType=VARCHAR},
+            </if>
+            <if test="menuRemarks != null and menuRemarks != ''">
+                #{menuRemarks,jdbcType=VARCHAR},
+            </if>
+            <if test="menuHidden != null">
+                #{menuHidden,jdbcType=NUMERIC},
+            </if>
+            <if test="menuParentName != null">
+                #{menuParentName}
+            </if>
+        </trim>
+    </insert>
+    <update id="deleteMenuById" parameterType="java.lang.Integer">
+        update TB_MENU set MENU_HIDDEN = 1 where MENU_ID = #{menuId}
+    </update>
+    <update id="updateMenuById" parameterType="com.urms.entity.Menu">
+        update TB_MENU
+        <set>
+            <if test="menuType != null and menuType != ''">
+                MENU_TYPE = #{menuType,jdbcType=VARCHAR},
+            </if>
+            <if test="menuName != null and menuName != ''">
+                MENU_NAME = #{menuName,jdbcType=VARCHAR},
+            </if>
+            <if test="menuParentId != null and menuParentId != ''">
+                MENU_PARENT_ID = #{menuParentId,jdbcType=NUMERIC},
+            </if>
+            <if test="menuStatus != null">
+                MENU_STATUS = #{menuStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="menuQueueNumber != null ">
+                MENU_QUEUE_NUMBER = #{menuQueueNumber,jdbcType=NUMERIC},
+            </if>
+            <if test="menuUrl != null and menuUrl != ''">
+                MENU_URL = #{menuUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="menuOpcode != null and menuOpcode != ''">
+                MENU_OPCODE = #{menuOpcode,jdbcType=VARCHAR},
+            </if>
+            <if test="menuRemarks != null and menuRemarks != ''">
+                MENU_REMARKS = #{menuRemarks,jdbcType=VARCHAR},
+            </if>
+            <if test="menuHidden != null and menuHidden != ''">
+                MENU_HIDDEN = #{menuHidden,jdbcType=NUMERIC},
+            </if>
+            <if test="menuParentName != null and menuParentName != ''">
+                MENU_PARENT_NAME = #{menuParentName}
+            </if>
+        </set>
+        where MENU_ID = #{menuId,jdbcType=NUMERIC}
+    </update>
+</mapper>

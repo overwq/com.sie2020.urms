@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.urms.mapper.UserMapper">
+    <resultMap id="baseMap" type="com.urms.entity.User">
+        <id column="user_id" property="userId" jdbcType="NUMERIC"/>
+        <result column="user_login_name"  property="userLoginName" jdbcType="VARCHAR"/>
+        <result column="user_password"  property="userPassword" jdbcType="VARCHAR"/>
+        <result column="user_name"  property="userName" jdbcType="VARCHAR"/>
+        <result column="user_phone"  property="userPhone" jdbcType="NUMERIC"/>
+        <result column="user_email"  property="userEmail" jdbcType="VARCHAR"/>
+        <result column="user_sex"  property="userSex" jdbcType="VARCHAR"/>
+        <result column="user_status"  property="userStatus" jdbcType="VARCHAR"/>
+        <result column="user_create_time"  property="userCreateTime" jdbcType="TIMESTAMP"/>
+        <result column="user_update_time"  property="userUpdateTime" jdbcType="TIMESTAMP"/>
+        <result column="user_remarks"  property="userRemarks" jdbcType="VARCHAR"/>
+        <result column="user_hidden"  property="userHidden" jdbcType="NUMERIC"/>
+    </resultMap>
+    <resultMap id="roleMap" type="com.urms.entity.Role">
+        <id column="ROLE_ID" jdbcType="NUMERIC" property="roleId" />
+        <result column="ROLE_NAME" jdbcType="VARCHAR" property="roleName" />
+        <result column="ROLE_REMARKS" jdbcType="VARCHAR" property="roleRemarks" />
+        <result column="ROLE_CODE" property="roleCode" jdbcType="VARCHAR"/>
+        <result column="ROLE_CREATE_TIME" jdbcType="TIMESTAMP" property="roleCreateTime" />
+        <result column="ROLE_INVALID_TIME" jdbcType="TIMESTAMP" property="roleInvalidTime"/>
+        <result column="ROLE_HIDDEN" jdbcType="NUMERIC" property="roleHidden" />
+        <result column="ROLE_STATUS" jdbcType="VARCHAR" property="roleStatus" />
+        <result column="ROLE_ID" property="userId"/>
+    </resultMap>
+    <resultMap id="menuMap" type="com.urms.entity.Menu">
+        <id column="MENU_ID" jdbcType="NUMERIC" property="menuId" />
+        <result column="MENU_TYPE" jdbcType="VARCHAR" property="menuType" />
+        <result column="MENU_NAME" jdbcType="VARCHAR" property="menuName" />
+        <result column="MENU_PARENT_ID" jdbcType="NUMERIC" property="menuParentId" />
+        <result column="MENU_STATUS" jdbcType="VARCHAR" property="menuStatus" />
+        <result column="MENU_QUEUE_NUMBER" jdbcType="NUMERIC" property="menuQueueNumber" />
+        <result column="MENU_URL" jdbcType="VARCHAR" property="menuUrl" />
+        <result column="MENU_OPCODE" jdbcType="VARCHAR" property="menuOpcode" />
+        <result column="MENU_REMARKS" jdbcType="VARCHAR" property="menuRemarks" />
+        <result column="MENU_HIDDEN" jdbcType="NUMERIC" property="menuHidden" />
+        <result column="MENU_PARENT_NAME" jdbcType="VARCHAR" property="menuParentName" />
+    </resultMap>
+    <sql id="baseSql">
+        USER_ID, USER_LOGIN_NAME, USER_PASSWORD,USER_NAME, USER_PHONE, USER_EMAIL, USER_SEX,
+        USER_STATUS, USER_CREATE_TIME, USER_REMARKS, USER_HIDDEN, USER_UPDATE_TIME
+    </sql>
+    <sql id="menuSql">
+        m.MENU_ID, m.MENU_TYPE, m.MENU_PARENT_NAME,m.MENU_NAME, m.MENU_PARENT_ID, m.MENU_STATUS,
+        m.MENU_QUEUE_NUMBER, m.MENU_URL,m.MENU_OPCODE, m.MENU_REMARKS, m.MENU_HIDDEN
+    </sql>
+    <sql id="roleSql">
+        r.ROLE_ID, r.ROLE_NAME,r.ROLE_STATUS, r.ROLE_CODE,r.ROLE_REMARKS, r.ROLE_CREATE_TIME,
+        r.ROLE_INVALID_TIME,r.ROLE_HIDDEN
+    </sql>
+    <select id="userLogin" parameterType="com.urms.entity.User" resultMap="baseMap">
+        select <include refid="baseSql"/>
+        from(
+            select <include refid="baseSql"/>
+            from TB_USER
+            where user_login_name = #{userLoginName}
+        ) where user_password = #{userPassword} and user_hidden = 0
+    </select>
+    <select id="getRoleNameByUserLoginName" parameterType="java.lang.String" resultType="java.lang.String">
+        select role_name
+        from  tb_user_role ur
+        where ur.user_login_name = #{userLoginName}
+    </select>
+    <select id="getCount" resultType="java.lang.Integer" parameterType="com.urms.entity.UserQueryCondition">
+        select count(*) from tb_user
+        <where>
+            <if test="loginName != null and loginName != ''">
+                user_login_name like concat('%',concat(#{loginName},'%'))
+            </if>
+            <if test="userName != null and userName != ''">
+                and user_name like concat('%',concat(#{userName},'%'))
+            </if>
+            <if test="status != null and status != ''">
+                and user_status = #{status}
+            </if>
+            <if test="startTime != null and stopTime == null">
+                and to_char(user_create_time,'yyyy-MM-dd')  >=to_char(#{startTime},'yyyy-MM-dd')
+            </if>
+            <if test="stopTime != null and startTime == null">
+                and to_char(#{stopTime},'yyyy-MM-dd')  >= to_char(user_create_time,'yyyy-MM-dd')
+            </if>
+            <if test="startTime != null and stopTime != null">
+                and to_char(user_create_time,'yyyy-MM-dd')  >=to_char(#{startTime},'yyyy-MM-dd')
+                and to_char(#{stopTime},'yyyy-MM-dd')  >= to_char(user_create_time,'yyyy-MM-dd')
+            </if>
+            <if test="hidden == 1 || hidden == 0">
+                and user_hidden = #{hidden}
+            </if>
+            <if test="hidden == null">
+                and user_hidden = 0
+            </if>
+        </where>
+
+    </select>
+    <select id="selectAll"  resultMap="baseMap" resultType="java.util.List" parameterType="com.urms.entity.UserQueryCondition">
+        select <include refid="baseSql"/>,rownum rn
+        from (
+            select <include refid="baseSql"/>,rownum rn
+            from (
+                select <include refid="baseSql"/> ,rownum rn
+                from TB_USER
+                <where>
+                    <if test="loginName != null and loginName != ''">
+                        user_login_name like concat('%',concat(#{loginName},'%'))
+                    </if>
+                    <if test="userName != null and userName != ''">
+                        and user_name like concat('%',concat(#{userName},'%'))
+                    </if>
+                    <if test="status != null and status != ''">
+                        and user_status = #{status}
+                    </if>
+                    <if test="startTime != null and stopTime == null">
+                        and to_char(user_create_time,'yyyy-MM-dd')  >=to_char(#{startTime},'yyyy-MM-dd')
+                    </if>
+                    <if test="stopTime != null and startTime == null">
+                        and to_char(#{stopTime},'yyyy-MM-dd')  >= to_char(user_create_time,'yyyy-MM-dd')
+                    </if>
+                    <if test="startTime != null and stopTime != null">
+                        and to_char(user_create_time,'yyyy-MM-dd')  >=to_char(#{startTime},'yyyy-MM-dd')
+                        and to_char(#{stopTime},'yyyy-MM-dd')  >= to_char(user_create_time,'yyyy-MM-dd')
+                    </if>
+                    <if test="hidden == 0 || hidden == 1">
+                        and user_hidden = #{hidden}
+                    </if>
+                    <if test="hidden == null">
+                        and user_hidden = 0
+                    </if>
+                </where>
+            )
+            where (#{pageSize} * #{pageNum}) >= rownum
+        )  where rn > ((#{pageNum} - 1) * #{pageSize})
+--         order by user_status desc
+    </select>
+    <select id="selectByUserId" parameterType="java.lang.Integer" resultMap="baseMap">
+        select
+        <include refid="baseSql"/>
+        from TB_USER
+        where USER_ID = #{userId} and user_hidden = 0
+    </select>
+    <select id="selectUserByLoginName" parameterType="java.lang.String" resultMap="baseMap">
+        select
+        <include refid="baseSql"/>
+        from TB_USER
+        where USER_LOGIN_NAME = #{userLoginName}
+    </select>
+    <select id="getUserRole" parameterType="java.lang.String" resultMap="roleMap" >
+        select
+        <include refid="roleSql"></include>
+        from TB_USER_ROLE ur
+        join TB_ROLE r on r.ROLE_ID = ur.ROLE_ID
+        where ur.USER_LOGIN_NAME = #{userLoginName}
+    </select>
+    <select id="getUserMenu" parameterType="java.lang.String" resultMap="menuMap">
+        select distinct
+        <include refid="menuSql"></include>
+        from tb_user_role ur
+        join tb_role_menu rm on ur.role_id = rm.role_id
+        join tb_menu m on m.menu_id = rm.menu_id
+        where ur.user_login_name = #{uName}
+    </select>
+    <insert id="insertUser" parameterType="com.urms.entity.User">
+        insert into TB_USER
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userLoginName != null and userLoginName !=''">
+                USER_LOGIN_NAME,
+            </if>
+            <if test="userPassword != null and userPassword != ''">
+                USER_PASSWORD,
+            </if>
+            <if test="userName != null and userName != ''">
+                USER_NAME,
+            </if>
+            <if test="userPhone != null and userPhone != ''">
+                USER_PHONE,
+            </if>
+            <if test="userEmail != null and userEmail != ''">
+                USER_EMAIL,
+            </if>
+            <if test="userSex != null and userSex != ''">
+                USER_SEX,
+            </if>
+            <if test="userStatus != null and userStatus != ''">
+                USER_STATUS,
+            </if>
+            <if test="userCreateTime != null">
+                USER_CREATE_TIME,
+            </if>
+            <if test="userRemarks != null and userRemarks != ''">
+                USER_REMARKS,
+            </if>
+            <if test="userHidden != null and userHidden != ''">
+                USER_HIDDEN,
+            </if>
+            <if test="userUpdateTime != null">
+                USER_UPDATE_TIME,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userLoginName != null and userLoginName !=''">
+                #{userLoginName,jdbcType=VARCHAR},
+            </if>
+            <if test="userPassword != null and userPassword != ''">
+                #{userPassword,jdbcType=VARCHAR},
+            </if>
+            <if test="userName != null and userName != ''">
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="userPhone != null and userPhone != ''">
+                #{userPhone,jdbcType=NUMERIC},
+            </if>
+            <if test="userEmail != null and userEmail != ''">
+                #{userEmail,jdbcType=VARCHAR},
+            </if>
+            <if test="userSex != null and userSex != ''">
+                #{userSex,jdbcType=VARCHAR},
+            </if>
+            <if test="userStatus != null and userStatus != ''">
+                #{userStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="userCreateTime != null">
+                #{userCreateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="userRemarks != null and userRemarks != ''">
+                #{userRemarks,jdbcType=VARCHAR},
+            </if>
+            <if test="userHidden != null and userHidden != ''">
+                #{userHidden,jdbcType=NUMERIC},
+            </if>
+            <if test="userUpdateTime != null">
+                #{userUpdateTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="deleteUserById" parameterType="java.lang.Integer">
+        update TB_USER set user_hidden = 1 where user_id = #{userId}
+    </update>
+    <update id="updateUserById" parameterType="com.urms.entity.User">
+        update TB_USER
+        <set>
+            <if test="userLoginName != null and userLoginName != ''">
+                USER_LOGIN_NAME = #{userLoginName,jdbcType=VARCHAR},
+            </if>
+            <if test="userPassword != null and userPassword != ''">
+                USER_PASSWORD = #{userPassword,jdbcType=VARCHAR},
+            </if>
+            <if test="userName != null and userName != ''">
+                USER_NAME = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="userPhone != null and userPhone != ''">
+                USER_PHONE = #{userPhone,jdbcType=NUMERIC},
+            </if>
+            <if test="userEmail != null and userEmail != ''">
+                USER_EMAIL = #{userEmail,jdbcType=VARCHAR},
+            </if>
+            <if test="userSex != null">
+                USER_SEX = #{userSex,jdbcType=VARCHAR},
+            </if>
+            <if test="userStatus != null ">
+                user_status = #{userStatus},
+            </if>
+            <if test="userCreateTime != null ">
+                USER_CREATE_TIME = #{userCreateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="userRemarks != null and userRemarks != ''">
+                USER_REMARKS = #{userRemarks,jdbcType=VARCHAR},
+            </if>
+            <if test="userHidden != null ">
+                USER_HIDDEN = #{userHidden,jdbcType=NUMERIC},
+            </if>
+            <if test="userUpdateTime != null ">
+                USER_UPDATE_TIME = #{userUpdateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where USER_ID = #{userId,jdbcType=NUMERIC}
+    </update>
+    <update id="updateUserStatusById" parameterType="com.urms.entity.User">
+        update TB_USER
+        set user_status = #{userStatus}
+        where user_id = #{userId}
+    </update>
+
+</mapper>
