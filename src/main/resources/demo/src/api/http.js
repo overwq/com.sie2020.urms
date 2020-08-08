@@ -41,13 +41,12 @@ intstance.interceptors.request.use(config => {
 intstance.interceptors.response.use(res => {
   if (res.data.message) {
     Message.closeAll()
-    if (res.data.state === 400) {
-      Message.error(res.data.message)
-    } else {
+    if (res.data.state === 200) {
       Message.success(res.data.message)
+    } else {
+      Message.error(res.data.message)
     }
   }
-
   return res
 })
 

@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import user from './modules/user'
 import UserRole from './modules/UserRole'
 import { getTree } from '../api/menu'
+
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -39,12 +40,6 @@ export default new Vuex.Store({
     getRefreshTag (state) {
       return state.refreshTag
     },
-    getTempUser (state) {
-      return state.tempUser
-    },
-    getCheckBoxShowState (state) {
-      return state.checkBoxShowState
-    },
     getTotalCount (state) {
       return state.totalCount
     },
@@ -76,17 +71,13 @@ export default new Vuex.Store({
     setRefreshTag (state, val) {
       if (typeof (val) === 'boolean') { state.refreshTag = val }
     },
-    setTempUser (state, val) {
-      state.tempUser = val
-    },
     setTotalCount (state, val) {
       if (typeof (val) === 'number') { state.totalCount = val }
     },
-    setCheckBoxShowState (state) {
-      state.checkBoxShowState = !state.checkBoxShowState
-    },
     setMenuTree (state, val) {
-      state.MenuTree = val
+      if (val && val.length > 0) {
+        state.MenuTree = val
+      }
     },
     setToken (state, val) {
       state.Token = val
@@ -99,6 +90,7 @@ export default new Vuex.Store({
         this.commit('setMenuTree', res.data)
       })
     }
+
 
   }
 })

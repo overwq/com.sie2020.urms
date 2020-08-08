@@ -1,5 +1,7 @@
+import { api_getUsers } from '../../api/user'
+
 export default {
-  namespaced: true,
+  // namespaced: true,
   state: {
     users: {}
   },
@@ -14,6 +16,11 @@ export default {
     }
   },
   actions: {
+    getAjaxQueryUsers (state,queryUser) {
+      api_getUsers(queryUser).then(res => {
+        state.users = res.data.data
+      })
+    },
 
   }
 

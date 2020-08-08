@@ -2,7 +2,7 @@ import http from './http'
 
 const getRoles = (role) => http.post('/role/select/condition', role)
 
-const addRole = (role) => http.post('/role/insert', role)
+const  addRole = (role) => http.post('/role/insert', role)
 
 const updateRole = (role) => http.post('/role/update', role)
 

@@ -41,7 +41,7 @@
           <template slot-scope="role">
             <el-button type="warning" round class="btn-wth" @click="updateRoleShow=true,uploadRoleId = role.row.roleId,setCrudState('updateRole')">修改</el-button>
             <el-button type="danger" round class="btn-wth" @click="deleteRoleById(role.row.roleId)">删除</el-button>
-            <el-button type="info" round class="btn-wth" @click="disableState(role.row.roleId)">无效</el-button>
+            <el-button type="info" round class="btn-wth" @click="disableState(role.row)">无效</el-button>
             <el-button type="primary" round class="btn-wth" @click="roleId = role.row.roleId,roleMenuShow = true,setUserRoleCheckedRoleId(role.row.roleId),setCrudState('roleMenu')">设置菜单</el-button>
           </template>
         </el-table-column>
@@ -73,7 +73,7 @@ export default {
       },
       roleMenuShow: false,
       updateRoleShow: false,
-      roleId:''
+      roleId: ''
     }
   },
   components: {
@@ -81,7 +81,7 @@ export default {
   },
   methods: {
     ...mapMutations(['setTempUser', 'setRefreshTag', 'setCrudState']),
-    setUserRoleCheckedRoleId(val){
+    setUserRoleCheckedRoleId (val) {
       // this.$store.dispatch('setRoleMenuTreeCheckedMenu',val)
     },
     deleteRoleById (id) {
@@ -91,25 +91,29 @@ export default {
         type: 'warning'
       }).then(() => {
         deleteRole(id).then(res => {
-          this.setRefreshTag(true)
+          if (res.data.state !== 402) {
+            this.setRefreshTag(true)
+          }
         })
       })
     },
     setRoles (roles) {
       this.roles = roles
     },
-    disableState (roleId) {
-      this.disableRole.roleId = roleId
-      this.disableRole.roleStatus = 0
+    disableState (role) {
+      this.disableRole.roleId = role.roleId
+      role.roleStatus === '无效' ? this.disableRole.roleStatus = 1 : this.disableRole.roleStatus = 0
       updateRole(JSON.stringify(this.disableRole)).then(res => {
-        this.setRefreshTag(true)
+        if (res.data.state !== 402) {
+          this.setRefreshTag(true)
+        }
       })
     }
   },
   computed: {
     ...mapState(['checkBoxShowState']),
     showRoles () {
-      if (this.roles && this.roles.length > 0){
+      if (this.roles && this.roles.length > 0) {
         this.roles.forEach(role => {
           if (role.roleStatus === 0) {
             role.roleStatus = '无效'

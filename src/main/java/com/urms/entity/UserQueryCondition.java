@@ -2,13 +2,14 @@ package com.urms.entity;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
 
 /**
  * @author 吴权鸿
  */
-public class UserQueryCondition extends BasePage{
+public class UserQueryCondition extends BasePage implements Serializable {
     private String loginName;
     private String userName;
     private String status;

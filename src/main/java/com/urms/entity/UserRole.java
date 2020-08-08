@@ -1,6 +1,8 @@
 package com.urms.entity;
 
-public class UserRole {
+import java.io.Serializable;
+
+public class UserRole implements Serializable {
     private Integer userRoleId;
     private String userLoginName;
     private String roleName;

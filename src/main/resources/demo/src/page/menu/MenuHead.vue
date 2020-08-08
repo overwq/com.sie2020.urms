@@ -3,11 +3,11 @@
     <el-link :underline="false">菜单名称:</el-link>
     <el-input v-model="menu.menuName" class="input" size="mini"></el-input>
     <el-link :underline="false">状态</el-link>
-    <el-select v-model="menu.menuStatus" placeholder="全部"  style="min-width:100px;max-width:200;width:8%" size="mini" >
-      <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value"></el-option>
+    <el-select v-model="menu.menuStatus"  @change="sendQueryMenus" placeholder="全部"  style="min-width:100px;max-width:200;width:8%" size="mini" >
+      <el-option v-for="item in options1"  :key="item.value" :label="item.label" :value="item.value"></el-option>
     </el-select>
     <el-link :underline="false">类型</el-link>
-    <el-select v-model="menu.menuType" placeholder="全部"  style="min-width:100px;max-width:200;width:8%" size="mini" >
+    <el-select v-model="menu.menuType" @change="sendQueryMenus" placeholder="全部"  style="min-width:100px;max-width:200;width:8%" size="mini" >
       <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value"></el-option>
     </el-select>
     <el-button type="info" icon="el-icon-search"  class="btn-wth" @click="sendQueryMenus">查询</el-button>
@@ -45,7 +45,9 @@ export default {
       getMenus(this.menu).then(res => {
         this.getMenuTotalCount()
         this.$emit('query-menus-coming', res.data.data)
-        this.setRefreshTag(false)
+        if (res.data.state !== 402) {
+          this.setRefreshTag(false)
+        }
       })
     },
     getMenuTotalCount () {
@@ -62,13 +64,14 @@ export default {
     crudState () { return this.getCrudState },
     pageNum () { return this.getPageNum },
     pageSize () { return this.getPageSize },
-    refreshTag () { return this.getRefreshTag },
-    menuStateValue () { return this.menu.menuStatus },
-    menuTypeValue () { return this.menu.menuType }
+    refreshTag () { return this.getRefreshTag }
+    // menuStateValue () { return this.menu.menuStatus },
+    // menuTypeValue () { return this.menu.menuType }
   },
   watch: {
     resetState (val) {
       this.menu = JSON.parse(JSON.stringify(this.resetMenu))
+      this.sendQueryMenus()
     },
     pageNum (val) {
       this.menu.pageNum = val
@@ -83,13 +86,13 @@ export default {
       if (val) {
         this.sendQueryMenus()
       }
-    },
-    menuStateValue (val) {
-      this.setRefreshTag(true)
-    },
-    menuTypeValue (val) {
-      this.setRefreshTag(true)
     }
+    // menuStateValue (val) {
+    //   this.setRefreshTag(true)
+    // },
+    // menuTypeValue (val) {
+    //   this.setRefreshTag(true)
+    // }
   }
 }
 </script>

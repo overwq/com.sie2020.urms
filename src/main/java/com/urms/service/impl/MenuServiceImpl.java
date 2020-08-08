@@ -5,6 +5,7 @@ import com.urms.entity.MenuQueryCondition;
 import com.urms.mapper.MenuMapper;
 import com.urms.service.MenuService;
 import com.urms.tools.InitTool;
+import com.urms.tools.Tool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,7 +50,12 @@ public class MenuServiceImpl implements MenuService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Integer updateMenuById(Menu menu) {
-        menu.setMenuParentId(mapper.selectByMenuName(menu.getMenuParentName()).getMenuId());
+        //设置父菜单id
+        String menuParentName = menu.getMenuParentName();
+        if (!Tool.isEmpty(menuParentName)){
+            Integer menuParentId = mapper.selectByMenuName(menuParentName).getMenuId();
+            menu.setMenuParentId(menuParentId);
+        }
         return mapper.updateMenuById(menu);
     }
 

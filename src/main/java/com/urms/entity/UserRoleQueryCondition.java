@@ -1,9 +1,11 @@
 package com.urms.entity;
 
+import java.io.Serializable;
+
 /**
  * @author 吴权鸿
  */
-public class UserRoleQueryCondition extends BasePage{
+public class UserRoleQueryCondition extends BasePage implements Serializable {
     private String userName;
     private String roleName;
     private String userLoginName;

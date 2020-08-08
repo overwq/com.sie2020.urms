@@ -1,6 +1,8 @@
 package com.urms.entity;
 
-public class RoleMenu {
+import java.io.Serializable;
+
+public class RoleMenu implements Serializable {
     private Integer roleMenuId;
     private Integer roleId;
     private Integer menuId;

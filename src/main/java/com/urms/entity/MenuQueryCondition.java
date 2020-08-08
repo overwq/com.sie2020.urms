@@ -1,9 +1,11 @@
 package com.urms.entity;
 
+import java.io.Serializable;
+
 /**
  * @author 吴权鸿
  */
-public class MenuQueryCondition extends BasePage {
+public class MenuQueryCondition extends BasePage implements Serializable {
     private String menuName;
     private String menuStatus;
     private String menuType;
