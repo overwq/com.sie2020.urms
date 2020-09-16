@@ -68,6 +68,10 @@
         </el-dialog>
       </template>
     </div>
+<<<<<<< HEAD
+=======
+<!-- 设置用户角色dialog -->
+>>>>>>> zhenghe
     <div id="UserRoleDialog" class="tableStyle" v-if="userState.userRoleShow">
       <el-dialog title="设置用户角色" :visible.sync="userState.userRoleShow"  center width="800px" >
         <el-table  @row-click="getCheckedMenuTrees" stripe  :data="showRoles"  height="480" ref="userRoleTable" @selection-change="selectionChange">
@@ -95,6 +99,7 @@
         <div class="dialog-footer" slot="footer">
           <el-button @click="updateUserRoleUR" type="primary" class="biggerBtn">设置角色</el-button>
           <el-button @click="dialogShow = false" type="info" class="biggerBtn">取消</el-button>
+<<<<<<< HEAD
         </div><!--dialogShow = false-->
         <div class="dialog_pageination">
           <pageination :noUsingVuex="true" @dialogPageSize="getDialogPageSize" @dialogPageNum="getDialogPageNum"></pageination>
@@ -104,6 +109,15 @@
     </div>
 <!--     数据展示table-->
     <!--      <userRole :checkedUser="checkedUser">{{checkedUser.userLoginName}}</userRole>-->
+=======
+        </div>
+        <div class="dialog_pageination">
+          <pageination :noUsingVuex="true" @dialogPageSize="getDialogPageSize" @dialogPageNum="getDialogPageNum"></pageination>
+        </div>
+      </el-dialog>
+    </div>
+<!--     数据展示table-->
+>>>>>>> zhenghe
     <div class="tableStyle">
       <el-table stripe :data="c_tableUser" height="645">//数据显示
         <el-table-column label="全选" type="selection" min-width="50"></el-table-column>
@@ -140,10 +154,16 @@ import {
   api_userGetCount,
   api_getUserById
 } from '../../api/user'
+<<<<<<< HEAD
 import { getRoleMenusByRoleId, getRoles ,getCount} from '../../api/role'
 import { getUserRoleByUserLoginName } from '../../api/userrole'
 import { mapMutations, mapGetters } from 'vuex'
 import UserRole from './UserRole'
+=======
+import { getRoleMenusByRoleId, getRoles, getCount } from '../../api/role'
+import { getUserRoleByUserLoginName, addUserRole, delUserRole } from '../../api/userrole'
+import { mapMutations } from 'vuex'
+>>>>>>> zhenghe
 import { Message } from 'element-ui'
 export default {
   name: 'User',
@@ -278,7 +298,11 @@ export default {
     this.$store.commit('setPageNum', 1)
   },
   components: {
+<<<<<<< HEAD
     Pageination, UserRole
+=======
+    Pageination
+>>>>>>> zhenghe
   },
   methods: {
     ...mapMutations(['setRefreshTag', 'setCrudState']),
@@ -364,6 +388,7 @@ export default {
     /*  表单重置  */
     resetForm (formName) {
       this.$refs[formName].resetFields()
+<<<<<<< HEAD
     },
     /*  分页查询  */
     getAjaxQueryUsers () {
@@ -407,6 +432,50 @@ export default {
         }
       })
     },
+=======
+    },
+    /*  分页查询  */
+    getAjaxQueryUsers () {
+      api_getUsers(this.queryUser).then(res => {
+        this.users = res.data.data
+        if (res.data.state !== 402) {
+          this.getTotalCount()
+        }
+      })
+    },
+    /*  获取分页总数  */
+    getTotalCount () {
+      const countUser = JSON.parse(JSON.stringify(this.queryUser))
+      countUser.userHidden = 0
+      if (parseInt(countUser.status) === 2) countUser.hidden = 1
+      api_userGetCount(JSON.stringify(countUser)).then(res => {
+        this.$store.commit('setTotalCount', res.data)
+      })
+    },
+    getDialogPageSize (val) {
+      this.dialogPageSize = val
+    },
+    getDialogPageNum (val) {
+      this.dialogPageNum = val
+    },
+    selectionChange (val) {
+      console.log(val)
+      this.checkedRole = val
+    },
+    getCheckedUserRole () {
+      getUserRoleByUserLoginName(this.checkedUser.userLoginName).then(res => {
+        this.oldCheckedRoleIds = res.data.data
+        if (this.oldCheckedRoleIds && this.oldCheckedRoleIds.length > 0) {
+          this.oldCheckedRoleIds.forEach(or => {
+            const checkedSelections = this.roles.find(r => r.roleId === or.roleId)
+            if (this.$refs.userRoleTable) {
+              this.$refs.userRoleTable.toggleRowSelection(checkedSelections, true)
+            }
+          })
+        }
+      })
+    },
+>>>>>>> zhenghe
     updateUserRoleUR () {
       try {
         const addUserRoles = this.checkedRole.filter(cr => !this.oldCheckedRoleIds.find(or => or.roleId === cr.roleId))
@@ -458,7 +527,11 @@ export default {
       getRoleMenusByRoleId(roleId).then(res => {
         this.menuTree = res.data.data
       })
+<<<<<<< HEAD
     },
+=======
+    }
+>>>>>>> zhenghe
   },
   computed: {
     /*  转换性别和状态 0 : 1 -> 女 : 男 , 无效 : 有效  */
@@ -509,6 +582,7 @@ export default {
         this.pickerOptionsValue[0] == null ? this.queryUser.startTime = '' : this.queryUser.startTime = this.pickerOptionsValue[0]
         this.pickerOptionsValue[1] == null ? this.queryUser.stopTime = '' : this.queryUser.stopTime = this.pickerOptionsValue[1]
         this.getAjaxQueryUsers()
+<<<<<<< HEAD
       }
     },
     resetState () {
@@ -541,6 +615,40 @@ export default {
         this.setUserRole(this.checkedUser)
       }
     },
+=======
+      }
+    },
+    resetState () {
+      return this.$store.getters.getResetState
+    },
+    showRoles () {
+      const tempRoles = this.roles
+      if (tempRoles && tempRoles.length > 0) {
+        tempRoles.forEach(role => {
+          role.roleStatus === 1 ? role.roleStatus = '有效' : role.roleStatus = '无效'
+        })
+      }
+      return tempRoles
+    },
+    dialogPageSize: {
+      get () {
+        return this.queryRole.pageSize
+      },
+      set (val) {
+        this.queryRole.pageSize = val
+        this.setUserRole(this.checkedUser)
+      }
+    },
+    dialogPageNum: {
+      get () {
+        return this.queryRole.pageNum
+      },
+      set (val) {
+        this.queryRole.pageNum = val
+        this.setUserRole(this.checkedUser)
+      }
+    }
+>>>>>>> zhenghe
   },
   watch: {
     resetState (val) {
