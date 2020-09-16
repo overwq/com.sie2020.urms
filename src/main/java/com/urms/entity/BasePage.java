@@ -1,9 +1,11 @@
 package com.urms.entity;
 
+import java.io.Serializable;
+
 /**
  * @author 吴权鸿
  */
-public  class BasePage {
+public  class BasePage implements Serializable {
     private Integer pageSize;
     private Integer pageNum;
 

@@ -1,11 +1,12 @@
 package com.urms.entity;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * 状态 1有 0 无
  */
-public class Menu {
+public class Menu implements Serializable {
     private Integer menuId;
     private String menuType;
     private String menuName;

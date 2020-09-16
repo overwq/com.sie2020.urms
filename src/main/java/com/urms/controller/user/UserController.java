@@ -20,10 +20,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Timestamp;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -79,6 +76,7 @@ public class UserController {
         if (Tool.isEmpty(user)) {
             return JSON.toJSONString(Tool.setErrorMessage(jsonObject));
         }
+        user.setUserPassword(Tool.md5(user.getUserPassword()));
         int result = service.insertUser(user);
         Tool.getResult(jsonObject,result,"用户添加成功","用户添加失败");
 
@@ -103,13 +101,6 @@ public class UserController {
     }
 
 
-   /* @RequestMapping("/user/getloginname")
-    public String getLoginUserName(HttpSession session){
-        User user = (User) session.getAttribute("user");
-        return user.getUserLoginName();
-    }
-*/
-
     /**
      * 根据id修改用户信息
      * @param user
@@ -117,10 +108,14 @@ public class UserController {
      */
     @RequestMapping("/user/update")
     public String updateUserById(@RequestBody User user){
-        System.out.println(JSON.toJSONString(user));
+
         JsonObject object = new JsonObject();
         if (Tool.isEmpty(user)){
             return  JSON.toJSONString(Tool.setErrorMessage(object));
+        }
+        String userPassword = user.getUserPassword();
+        if (!Tool.isEmpty(userPassword)){
+            user.setUserPassword(Tool.md5(userPassword));
         }
         Integer result = service.updateUserById(user);
         Tool.getResult(object,result,"用户信息修改成功","用户信息修改失败");
@@ -129,16 +124,6 @@ public class UserController {
         return JSON.toJSONString(object);
     }
 
-//    /**
-//     * 测试用接口
-//     * @param uname
-//     * @return
-//     */
-//    @RequestMapping("/user/menu")
-//    public String getUserMenu(@RequestBody String uname){
-//
-//        return JSON.toJSONString(service.getUserMenu(uname));
-//    }
 
     /**
      * 返回没有权限的用户的提示信息
@@ -147,10 +132,24 @@ public class UserController {
     @RequestMapping("/user/no/permission")
     public String setNoPermissionMessage(){
         JsonObject object = new JsonObject();
-        Tool.setErrorMessage(object,"小伙子 你没有权限 ！");
+        object.setMessage(this.getTips());
+        object.setCurrentTime(new Date());
+        object.setState(402);
         return JSON.toJSONString(object);
     }
 
+    private String getTips(){
+        String[] tips = new String[]{
+                "你没有权限",
+            "不要再试了,你真的没有权限",
+            "你不要过来啊",
+            "再点我就把你吃掉",
+            "神经病啊，我不要面子的吗",
+            "游泳健身了解一下？"
+        };
+        Random random = new Random();
+        return tips[random.nextInt(tips.length)];
+    }
 
     /**
      * 根据用户id查询用户信息

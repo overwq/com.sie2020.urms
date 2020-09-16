@@ -7,7 +7,7 @@ export default {
         roleName: '',
         roleStatus: '',
         roleCode: '',
-        pageSize: 15,
+        pageSize: 20,
         pageNum: 1
       },
       countRole: {
@@ -15,7 +15,7 @@ export default {
         roleName: '',
         roleStatus: '',
         roleCode: '',
-        pageSize: 15,
+        pageSize: 20,
         pageNum: 1
       },
 
@@ -23,22 +23,28 @@ export default {
         roleName: '',
         roleStatus: '',
         roleCode: '',
-        pageSize: 15,
+        pageSize: 20,
         pageNum: 1
       },
-      options1: [{
-        value: '',
-        label: '全部'
-      }, {
-        value: '1',
-        label: '有效'
-      }, {
-        value: '0',
-        label: '无效'
-      }, {
-        value: '2',
-        label: '删除'
-      }],
+      options1:
+      [
+        {
+          value: '',
+          label: '全部'
+        },
+        {
+          value: '1',
+          label: '有效'
+        },
+        {
+          value: '0',
+          label: '无效'
+        },
+        // {
+        //   value: '2',
+        //   label: '删除'
+        // }
+      ],
       rules: {
         // userLoginName: [
         //   { validate: checkUserName, trigger: 'blur', required: true, message: '用户名不能为空' }

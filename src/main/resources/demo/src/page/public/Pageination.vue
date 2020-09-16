@@ -19,7 +19,7 @@ import { mapMutations, mapGetters } from 'vuex'
 export default {
   data () {
     return {
-      data_totalCount: 20,
+      // data_totalCount: 20,
       currentPage4: 1
     }
   },
@@ -46,15 +46,15 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['getTotalCount']),
-    c_totalCount: {
-      get () {
-        return this.getTotalCount
-      },
-      set (val) {
-        this.data_totalCount = this.getTotalCount
-      }
-    }
+    ...mapGetters(['getTotalCount'])
+    // c_totalCount: {
+    //   get () {
+    //     return this.getTotalCount
+    //   },
+    //   set (val) {
+    //     this.data_totalCount = this.getTotalCount
+    //   }
+    // }
   }
 }
 </script>

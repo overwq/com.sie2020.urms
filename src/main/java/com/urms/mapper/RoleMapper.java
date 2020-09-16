@@ -1,5 +1,6 @@
 package com.urms.mapper;
 
+import com.urms.entity.Menu;
 import com.urms.entity.Role;
 import com.urms.entity.RoleQueryCondition;
 import org.springframework.stereotype.Repository;
@@ -57,4 +58,6 @@ public interface RoleMapper {
      */
     Integer getCount(RoleQueryCondition condition);
 
+
+    List<Menu> getRoleMenu(Integer roleId);
 }

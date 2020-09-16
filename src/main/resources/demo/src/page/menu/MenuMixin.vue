@@ -24,16 +24,14 @@ export default {
         menuName: '',
         menuStatus: '',
         menuType: '',
-        pageSize: 15,
+        pageSize: 20,
         pageNum: 1
       },
 
       addMenu: {
         menuName: '',
         menuStatus: 1,
-        menuType: '',
-        pageSize: 15,
-        pageNum: 1
+        menuType: ''
       },
       options1: [
         {
@@ -47,11 +45,11 @@ export default {
         {
           value: '0',
           label: '无效'
-        },
-        {
-          value: '2',
-          label: '删除'
         }
+        // {
+        //   value: '2',
+        //   label: '删除'
+        // }
       ],
       options2: [{
         value: '',

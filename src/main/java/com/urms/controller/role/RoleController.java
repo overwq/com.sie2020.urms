@@ -2,8 +2,10 @@ package com.urms.controller.role;
 
 import com.alibaba.fastjson.JSON;
 import com.urms.entity.JsonObject;
+import com.urms.entity.Menu;
 import com.urms.entity.Role;
 import com.urms.entity.RoleQueryCondition;
+import com.urms.service.MenuService;
 import com.urms.service.RoleService;
 import com.urms.tools.Tool;
 import org.slf4j.Logger;
@@ -28,6 +30,8 @@ import java.util.Map;
 public class RoleController {
     @Autowired
     RoleService service;
+    @Autowired
+    MenuService menuService;
     private final static Logger log = LoggerFactory.getLogger(RoleController.class);
     /**
      * 查询所有角色信息
@@ -51,6 +55,20 @@ public class RoleController {
     public Integer getTotalCount(@RequestBody RoleQueryCondition condition){
 
         return service.getCount(condition);
+    }
+
+    @RequestMapping("/role/select/menu")
+    public String getRoleMenuByRoleId(@RequestBody Integer roleId){
+        JsonObject object = new JsonObject();
+        List<Menu> result = menuService.getTreeMenuByRoleId(roleId);
+        if (result.size() >0){
+            Tool.setSesscesMessage(object,"角色菜单获取成功");
+        }else {
+            Tool.setErrorMessage(object,"角色菜单获取失败，无对应信息");
+        }
+        object.setData(result);
+        System.out.println(JSON.toJSONString(result));
+        return JSON.toJSONString(object);
     }
 
     /**

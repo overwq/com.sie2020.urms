@@ -53,10 +53,8 @@ export default {
   },
   methods: {
     logout () {
-      sessionStorage.removeItem('user')
-      sessionStorage.removeItem('role')
-      sessionStorage.removeItem('permissions')
       sessionStorage.clear()
+      localStorage.clear()
       Message.closeAll()
       Message.warning('登陆信息已清除 请重新登陆 ！')
     }

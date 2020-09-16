@@ -84,6 +84,23 @@
         from TB_MENU p1
         join TB_MENU p2 on p1.MENU_ID = p2.MENU_PARENT_ID
         join TB_MENU p3 on p2.MENU_ID = p3.MENU_PARENT_ID
+        where p1.MENU_HIDDEN = 0 and p2.MENU_HIDDEN = 0 and p3.MENU_HIDDEN = 0
+        order by p3.MENU_QUEUE_NUMBER
+    </select>
+    <select id="getTreeMenuByRoleId"  resultMap="treeMap" parameterType="java.lang.Integer">
+        select
+        <include refid="rootSql"/>,<include refid="fatherSql"/>,<include refid="childSql"/>
+        from TB_MENU p1
+        join TB_MENU p2 on p1.MENU_ID = p2.MENU_PARENT_ID
+        join TB_MENU p3 on p2.MENU_ID = p3.MENU_PARENT_ID
+        <if test="roleId != null and roleId!= ''">
+            join TB_ROLE_MENU rm on (rm.MENU_ID = p1.MENU_ID or rm.MENU_ID = p2.MENU_ID or rm.MENU_ID = p3.MENU_ID)
+        </if>
+        where p1.MENU_HIDDEN = 0 and p2.MENU_HIDDEN = 0 and p3.MENU_HIDDEN = 0
+        <if test="roleId != null and roleId!= ''">
+            and rm.ROLE_ID = #{roleId}
+        </if>
+        order by p3.MENU_QUEUE_NUMBER
     </select>
     <select id="getOptionParentMenuName"  resultType="java.util.Map">
         SELECT MENU_NAME ,MENU_ID FROM TB_MENU WHERE MENU_TYPE IN ('目录','菜单')
@@ -112,6 +129,7 @@
             <if test="menuStatus != null and menuStatus != ''">
                 and MENU_STATUS = #{menuStatus}
             </if>
+            and MENU_HIDDEN = 0
         </where>
     </select>
     <select id="selectMenuByCondition" parameterType="com.urms.entity.MenuQueryCondition" resultMap="baseMap" resultType="java.util.List">
@@ -131,6 +149,7 @@
                     <if test="menuStatus != null and menuStatus != ''">
                         and MENU_STATUS = #{menuStatus}
                     </if>
+                    and MENU_HIDDEN = 0
                 </where>
                 order by MENU_ID
             ) where (#{pageSize} * #{pageNum}) >= rownum

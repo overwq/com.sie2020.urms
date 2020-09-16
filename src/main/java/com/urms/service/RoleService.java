@@ -1,5 +1,6 @@
 package com.urms.service;
 
+import com.urms.entity.Menu;
 import com.urms.entity.Role;
 import com.urms.entity.RoleQueryCondition;
 
@@ -59,4 +60,5 @@ public interface RoleService {
      */
     Integer getCount(RoleQueryCondition condition);
 
+    List<Menu> getRoleMenu(Integer roleId);
 }

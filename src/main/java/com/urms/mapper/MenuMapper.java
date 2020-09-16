@@ -60,6 +60,8 @@ public interface MenuMapper {
 
     List<Menu> getTreeMenu();
 
+    List<Menu> getTreeMenuByRoleId(int roleId);
+
     Integer getCount(MenuQueryCondition condition);
 
 }

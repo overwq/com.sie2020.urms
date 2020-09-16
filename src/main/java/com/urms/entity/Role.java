@@ -2,9 +2,10 @@ package com.urms.entity;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class Role {
+public class Role implements Serializable {
     private Integer roleId;
     private String roleName;
     private String roleRemarks;

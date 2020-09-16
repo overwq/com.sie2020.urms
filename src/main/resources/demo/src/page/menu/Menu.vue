@@ -21,7 +21,7 @@
           <template slot-scope="menu" class="btn-wth">
             <el-button type="warning" round class="btn-wth" @click="setUpdateMenuId(menu.row.menuId),setCrudState('updateMenu')">修改</el-button>
             <el-button type="danger" round class="btn-wth" @click="deleteMenuInfo(menu.row.menuId)">删除</el-button>
-            <el-button type="info" round class="btn-wth" @click="disableState(menu.row.menuId)">无效</el-button>
+            <el-button type="info" round class="btn-wth" @click="disableState(menu.row)">无效</el-button>
           </template>
         </el-table-column>
 
@@ -58,6 +58,7 @@ export default {
       this.menus = menus
     },
     deleteMenuInfo (id) {
+      console.log(id)
       this.$confirm('确认要删除该用户吗？', '提示', {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
@@ -65,6 +66,7 @@ export default {
       }).then(() => {
         deleteMenu(id).then(res => {
           this.setRefreshTag(true)
+          this.$store.dispatch('setMenuTree')
         })
       })
     },
@@ -72,11 +74,14 @@ export default {
       // console.log(val)
       this.updateMenuId = val
     },
-    disableState (menuId) {
-      this.disableMenu.menuId = menuId
-      this.disableMenu.menuStatus = 0
+    disableState (menu) {
+      this.disableMenu.menuId = menu.menuId
+      menu.menuStatus === '无效' ? this.disableMenu.menuStatus = 1 : this.disableMenu.menuStatus = 0
       updateMenu(JSON.stringify(this.disableMenu)).then(res => {
-        this.setRefreshTag(true)
+        if (res.data.state !== 402) {
+          this.setRefreshTag(true)
+          this.$store.dispatch('setMenuTree')
+        }
       })
     }
 

@@ -1,8 +1,9 @@
 package com.urms.entity;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class LoginUser {
+public class LoginUser implements Serializable {
     private String loginName;
     private List<Menu> menus;
 

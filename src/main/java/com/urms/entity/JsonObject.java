@@ -1,10 +1,11 @@
 package com.urms.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public class JsonObject<T> {
+public class JsonObject<T> implements Serializable {
     private String message;
     private Integer state;
     private Date currentTime;

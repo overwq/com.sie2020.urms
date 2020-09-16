@@ -1,12 +1,14 @@
 package com.urms.entity;
 
 import com.alibaba.fastjson.annotation.JSONField;
+
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * @author 吴权鸿
  */
-public class RoleQueryCondition extends BasePage{
+public class RoleQueryCondition extends BasePage implements Serializable {
     private String roleName;
     private Integer roleStatus;
     private String roleCode;

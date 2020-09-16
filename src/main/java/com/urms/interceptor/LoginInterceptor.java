@@ -9,6 +9,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import java.io.IOException;
 
@@ -47,16 +48,18 @@ public class LoginInterceptor implements WebMvcConfigurer {
             boolean pass = false;
             String token = request.getHeader("token");
             String[] menus = null;
+            String header = null;
+            String ender = null;
+            String[] url = request.getRequestURI().split("/");
             try {
                 menus =  token.split(",");
+                header = url[1];
+                ender = url[2];
             }catch (Exception e){
+                System.out.println("******获取菜单信息或菜单地址时发生异常 ！*******");
                 return false;
 //                throw PermissionException.NO_TOKEN_EXCEPTION;
             }
-            String[] url = request.getRequestURI().split("/");
-            String header = url[1];
-            String ender = url[2];
-
             if (null != menus && menus.length > 0){
                 for (String menu : menus ){
                     String[] uUrl = menu.split("/");

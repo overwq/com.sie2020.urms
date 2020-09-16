@@ -27,6 +27,7 @@
 <script>
 import { mapGetters, mapMutations } from 'vuex'
 import { getRoleMenuByRoleId, addRoleMenu, deleteRoleMenu } from '../../api/rolemenu'
+import { Message } from 'element-ui'
 export default {
   props: {
     roleId: ''
@@ -75,19 +76,19 @@ export default {
       getRoleMenuByRoleId(this.roleId).then(res => {
         const roleMenus = res.data.data
         this.roleMenus = roleMenus
-        let tempRoleIds = []
-        if(roleMenus && roleMenus.length > 0){
+        let tempMenuIds = []
+        if (roleMenus && roleMenus.length > 0) {
           roleMenus.forEach(sid => {
-            tempRoleIds = [...tempRoleIds, sid.menuId]
+            tempMenuIds = [...tempMenuIds, sid.menuId]
           })
         }
-        this.checkedBeforeChange = tempRoleIds
-        this.$refs.tree.setCheckedKeys(tempRoleIds)
+        this.checkedBeforeChange = tempMenuIds
+        this.$refs.tree.setCheckedKeys(tempMenuIds)
       })
     },
     addRoleMenuRM (addRoleMenus) {
       let roleMenus = []
-      if(addRoleMenus && addRoleMenus.length > 0){
+      if (addRoleMenus && addRoleMenus.length > 0) {
         addRoleMenus.forEach(ck => {
           const roleMenu = {
             roleId: this.roleId,
@@ -103,7 +104,7 @@ export default {
       //   deleteRoleMenu(drm.roleMenuId)
       // })
       let roleMenuIds = []
-      if(deleteRoleMenus && deleteRoleMenus.length > 0){
+      if (deleteRoleMenus && deleteRoleMenus.length > 0) {
         deleteRoleMenus.forEach(drm => {
           roleMenuIds = [...roleMenuIds, drm.roleMenuId]
         })
@@ -111,16 +112,21 @@ export default {
       deleteRoleMenu(roleMenuIds)
     },
     updateRoleMenu () {
-      const checkedBefore = this.roleMenus
-      const checkedNow = this.$refs.tree.getCheckedKeys()
-      const addRoleMenus = checkedNow.filter(cn => !checkedBefore.find(cb => cb.menuId === cn))
-      const deleteRoleMenus = checkedBefore.filter(cb => !checkedNow.find(cn => cn === cb.menuId))
-      if (addRoleMenus.length > 0) {
-        this.addRoleMenuRM(addRoleMenus)
+      try {
+        const checkedBefore = this.roleMenus
+        const checkedNow = this.$refs.tree.getCheckedKeys()
+        const addRoleMenus = checkedNow.filter(cn => !checkedBefore.find(cb => cb.menuId === cn))
+        const deleteRoleMenus = checkedBefore.filter(cb => !checkedNow.find(cn => cn === cb.menuId))
+        if (addRoleMenus.length > 0) {
+          this.addRoleMenuRM(addRoleMenus)
+        }
+        if (deleteRoleMenus.length > 0) {
+          this.deleteRoleMenuRM(deleteRoleMenus)
+        }
+      } catch (error) {
+        Message.error('你没有设置角色菜单的权限')
       }
-      if (deleteRoleMenus.length > 0) {
-        this.deleteRoleMenuRM(deleteRoleMenus)
-      }
+
       this.dialogShow = false
     }
 

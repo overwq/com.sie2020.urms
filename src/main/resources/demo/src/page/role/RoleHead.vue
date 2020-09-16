@@ -5,7 +5,7 @@
     <el-link :underline="false">角色编码:</el-link>
     <el-input v-model="role.roleCode" class="input" size="mini" ></el-input>
     <el-link :underline="false">状态</el-link>
-    <el-select v-model="role.roleStatus" placeholder="全部"  style="min-width:100px;max-width:200;width:8%" size="mini" >
+    <el-select v-model="role.roleStatus" @change="getAllRoles" placeholder="全部"  style="min-width:100px;max-width:200;width:8%" size="mini" >
       <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value"></el-option>
     </el-select>
     <el-button type="info" icon="el-icon-search"  class="btn-wth" @click="getAllRoles">查询</el-button>
@@ -43,7 +43,9 @@ export default {
       getRoles(this.role).then(res => {
         this.$emit('query-role-comming', res.data.data)
         this.setRoleTotalCount()
-        this.setRefreshTag(false)
+        if (res.data.state !== 402) {
+          this.setRefreshTag(false)
+        }
       })
     },
     checkBoxStateChange () {
@@ -63,12 +65,13 @@ export default {
     crudState () { return this.getCrudState },
     pageNum () { return this.getPageNum },
     pageSize () { return this.getPageSize },
-    refreshTag () { return this.getRefreshTag },
-    getRoleState () { return this.role.roleStatus }
+    refreshTag () { return this.getRefreshTag }
+    // getRoleState () { return this.role.roleStatus }
   },
   watch: {
     resetState () {
       this.role = JSON.parse(JSON.stringify(this.resetRole))
+      this.getAllRoles()
     },
     pageNum (val) {
       this.role.pageNum = val
@@ -82,10 +85,10 @@ export default {
       if (val) {
         this.getAllRoles()
       }
-    },
-    getRoleState () {
-      this.setRefreshTag(true)
     }
+    // getRoleState () {
+    //   this.setRefreshTag(true)
+    // }
   }
 }
 </script>
