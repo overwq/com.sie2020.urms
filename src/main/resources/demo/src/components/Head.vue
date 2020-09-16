@@ -28,13 +28,15 @@
 </style>
 
 <script>
-import UserMixin from '../page/user/UserMixin'
 
 export default {
-  mixins: [UserMixin],
   computed: {
     getUserName () {
+<<<<<<< HEAD
       let user = JSON.parse(localStorage.getItem('user'))
+=======
+      const user = JSON.parse(localStorage.getItem('user'))
+>>>>>>> zhenghe
       return user.userName
     }
   },
